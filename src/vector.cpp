@@ -4,16 +4,16 @@
 Vector::Vector(const double x, const double y) : x(x), y(y) {}
 
 Vector Vector::copy() const {
-    return Vector(x, y);
+    return Vector(this->x, this->y);
 }
 
-void Vector::set(const double x_, const double y_) {
-    x = x_;
-    y = y_;
+void Vector::set(const double x, const double y) {
+    this->x = x;
+    this->y = y;
 }
 
 double Vector::norm_squared() const {
-    return  x*x + y*y;
+    return  this->x*this->x + this->y*this->y;
 }
 
 double Vector::norm() const {
@@ -22,8 +22,8 @@ double Vector::norm() const {
 
 void Vector::normalize() {
     double norm = this->norm();
-    x /= norm;
-    y /= norm;
+    this->x /= norm;
+    this->y /= norm;
 }
 
 void operator+=(Vector &vec, const Vector &vec_const) {
