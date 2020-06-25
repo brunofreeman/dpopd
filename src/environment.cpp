@@ -15,15 +15,16 @@ std::string Environment::to_string() {
     std::string env_str = "b: ";
     env_str += (*this->border).to_string();
 
-    env_str += "\no: {";
+    env_str += "\no: {\n";
     for (size_t i = 0; i < obstacles_s; i++) {
-        env_str += "\t";
+        env_str += "     ";
         env_str += (*this->obstacles[i]).to_string();
         if (i != this->obstacles_s - 1) {
-            env_str += ", ";
+            env_str += ",";
         }
+        env_str += "\n";
     }
-    env_str += "\n}";
-    
+    env_str += "}";
+
     return env_str;
 }

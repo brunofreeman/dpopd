@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS = -Wall
+CPPFLAGS = -Wall -std=c++11
 #LDFLAGS = -framework OpenGL -framework GLUT
 LDFLAGS =
 
