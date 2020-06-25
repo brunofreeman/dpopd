@@ -1,10 +1,6 @@
 CC = g++
-CPPFLAGS = -std=c++11 -Wall -fsanitize=address
-LDFLAGS = -lglfw.3 -framework OpenGL
-
-# -framework GLUT
-# $(pkg-config --cflags glfw3) -o myprog myprog.c $(pkg-config --static --libs glfw3)
-# cc -o myprog myprog.c -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+CPPFLAGS = -std=c++17 -Wall -fsanitize=address
+LDFLAGS = -lglfw.3.3 -lGLEW.2.1.0 -framework OpenGL
 
 INC_DIR = inc
 SRC_DIR = src
@@ -36,6 +32,7 @@ clean:
 # -std=c++11 use the C++11 standard
 # -Wall output all warnings
 # -fsanitize=address use ASan
+# -l[libname] points to a library
 # -p makes intermediate dirs, idempotent
 # -o specify name of executable
 # -c to object file
