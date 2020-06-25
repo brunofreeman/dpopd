@@ -8,6 +8,7 @@
 #define JSON_ID_BORDER "border"
 #define JSON_ID_OBSTACLES "obstacles"
 
+// user responsible for deleting the Environment
 Environment *json_environment(char *filename);
 
 #endif // #ifndef __JSON_WRAPPER_HPP__

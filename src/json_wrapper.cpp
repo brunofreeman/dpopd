@@ -10,15 +10,15 @@ nlohmann::json open_json(std::string filepath) {
 }
 
 Polygon *json_polygon(nlohmann::json json_polygon) {
-    size_t verticies_s = json_polygon.size();
-    Vector verticies[verticies_s];
+    size_t vertices_s = json_polygon.size();
+    Vector *vertices =  new Vector[vertices_s];
 
-    for (size_t i = 0; i < verticies_s; i++) {
+    for (size_t i = 0; i < vertices_s; i++) {
         Vector vertex(json_polygon[i][0], json_polygon[i][1]);
-        verticies[i] = vertex;
+        vertices[i] = vertex;
     }
     
-    return new Polygon(verticies, verticies_s);
+    return new Polygon(vertices, vertices_s);
 }
 
 Environment *json_environment(std::string filename) {
@@ -27,7 +27,7 @@ Environment *json_environment(std::string filename) {
     Polygon *border = json_polygon(json_env[JSON_ID_BORDER]);
 
     size_t obstacles_s = json_env[JSON_ID_OBSTACLES].size();
-    Polygon *obstacles[obstacles_s];
+    Polygon **obstacles = new Polygon*[obstacles_s];
     for (size_t i = 0; i < obstacles_s; i++) {
         Polygon *obstacle = json_polygon(json_env[JSON_ID_OBSTACLES][i]);
         obstacles[i] = obstacle;

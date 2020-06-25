@@ -3,6 +3,11 @@
 
 Vector::Vector(const double x, const double y) : x(x), y(y) {}
 
+std::string Vector::to_string() {
+    return "(" + std::to_string(this->x) + ", "
+               + std::to_string(this->y) + ")";
+}
+
 Vector Vector::copy() const {
     return Vector(this->x, this->y);
 }

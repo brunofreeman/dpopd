@@ -1,6 +1,7 @@
 CC = g++
 CPPFLAGS = -Wall
-LDFLAGS = -framework OpenGL -framework GLUT
+#LDFLAGS = -framework OpenGL -framework GLUT
+LDFLAGS =
 
 INC_DIR = inc
 SRC_DIR = src
@@ -9,7 +10,7 @@ BIN_DIR = bin
 
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.cpp=.o))
-TARGET = $(BIN_DIR)/demo
+TARGET = $(BIN_DIR)/visualizer
 
 folders:
 	mkdir -p $(INC_DIR) & mkdir -p $(SRC_DIR) & mkdir -p $(OBJ_DIR) & mkdir -p $(BIN_DIR)

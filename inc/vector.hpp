@@ -1,12 +1,15 @@
 #ifndef __VECTOR_HPP__
 #define __VECTOR_HPP__
 
+#include <string>
+
 class Vector {
     public:
         double x;
         double y;
         Vector() : x(0), y(0) {}
         Vector(const double, const double);
+        std::string to_string();
         Vector copy() const;
         void set(const double x, const double y);
         double norm_squared() const;
