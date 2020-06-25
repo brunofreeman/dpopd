@@ -1,7 +1,10 @@
 CC = g++
-CPPFLAGS = -Wall -std=c++11
-#LDFLAGS = -framework OpenGL -framework GLUT
-LDFLAGS =
+CPPFLAGS = -std=c++11 -Wall -fsanitize=address
+LDFLAGS = -lglfw.3 -framework OpenGL
+
+# -framework GLUT
+# $(pkg-config --cflags glfw3) -o myprog myprog.c $(pkg-config --static --libs glfw3)
+# cc -o myprog myprog.c -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
 INC_DIR = inc
 SRC_DIR = src
@@ -18,7 +21,7 @@ folders:
 all: folders $(TARGET)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CC) -c $(CPPFLAGS) $^ -o $@ $(LDFLAGS) -I$(INC_DIR)
+	$(CC) -c $(CPPFLAGS) $^ -o $@ -I$(INC_DIR)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)
@@ -30,6 +33,9 @@ clean:
 .PRECIOUS: $(OBJ_DIR)/%.o
 
 # ---Flags---
+# -std=c++11 use the C++11 standard
+# -Wall output all warnings
+# -fsanitize=address use ASan
 # -p makes intermediate dirs, idempotent
 # -o specify name of executable
 # -c to object file
