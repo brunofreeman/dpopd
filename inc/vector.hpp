@@ -17,15 +17,15 @@ class Vector {
         void normalize();
 };
 
-void operator+=(Vector &vec, const Vector &vec_const);
-void operator-=(Vector &vec, const Vector &vec_const);
-void operator*=(Vector &vec, const double &scalar);
-Vector operator+(const Vector &vec1, const Vector &vec2);
-Vector operator-(const Vector &vec1, const Vector &vec2);
-Vector operator*(const Vector &vec, const double &scalar);
-Vector operator*(const double &scalar, const Vector &vec);
-double dot(const Vector &vec1, const Vector &vec2);
+void operator+=(Vector& vec, const Vector& vec_const);
+void operator-=(Vector& vec, const Vector& vec_const);
+void operator*=(Vector& vec, const double& scalar);
+Vector operator+(const Vector& vec1, const Vector& vec2);
+Vector operator-(const Vector& vec1, const Vector& vec2);
+Vector operator*(const Vector& vec, const double& scalar);
+Vector operator*(const double& scalar, const Vector& vec);
+double dot(const Vector& vec1, const Vector& vec2);
 // returns the smallest angle between the vectors
-double angle(const Vector &vec1, const Vector &vec2);
+double angle(const Vector& vec1, const Vector& vec2);
 
 #endif // #ifndef __VECTOR_HPP__

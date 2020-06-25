@@ -7,10 +7,10 @@
 
 class Environment {
     public:
-        Polygon *border;
-        Polygon **obstacles;
+        Polygon* border;
+        Polygon** obstacles;
         size_t obstacles_s;
-        Environment(Polygon *border, Polygon **obstacles, const size_t obstacles_s);
+        Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s);
         ~Environment();
         std::string to_string();
 };

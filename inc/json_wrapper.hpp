@@ -9,6 +9,6 @@
 #define JSON_ID_OBSTACLES "obstacles"
 
 // user responsible for deleting the Environment
-Environment *json_environment(std::string filename);
+Environment* json_environment(std::string filename);
 
 #endif // #ifndef __JSON_WRAPPER_HPP__

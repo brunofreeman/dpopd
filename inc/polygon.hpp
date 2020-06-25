@@ -7,9 +7,9 @@
 
 class Polygon {
     public:
-        Vector *vertices;
+        Vector* vertices;
         size_t vertices_s;
-        Polygon(Vector *vertices, const size_t vertices_s);
+        Polygon(Vector* vertices, const size_t vertices_s);
         ~Polygon();
         std::string to_string();
 };
