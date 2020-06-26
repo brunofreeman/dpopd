@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "json_wrapper.hpp"
 #include "renderer.hpp"
+#include "vertex_buffer.hpp"
+#include "index_buffer.hpp"
 
 struct ShaderSource {
     std::string vertex_src;
@@ -122,7 +124,7 @@ static int make_window() {
         return -1;
     }
 
-    std::cout << "GL version: " << glGetString(GL_VERSION) << std::endl;
+    print_gl_version();
 
     float positions[] = {
         -0.5f, -0.5f, // 0
@@ -140,20 +142,14 @@ static int make_window() {
     glGenVertexArrays(1, &vertex_arr_id);
     glBindVertexArray(vertex_arr_id);
 
-    unsigned int buffer_id;
-    glGenBuffers(1, &buffer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
-    unsigned int idx_buff_id;
-    glGenBuffers(1, &idx_buff_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx_buff_id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    IndexBuffer ib(indices, 6);
 
-    ShaderSource shader_src = parse_shaders("src/gfx/default.shader");
+    ShaderSource shader_src = parse_shaders("src/gfx/_default.shader");
 
     unsigned int shader_id = create_shader(shader_src.vertex_src, shader_src.fragment_src);
     glUseProgram(shader_id);
@@ -172,7 +168,7 @@ static int make_window() {
 
 
         glBindVertexArray(vertex_arr_id);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
+        ib.bind();
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 

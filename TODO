@@ -1,1 +1,2 @@
 TODO: integrate CMake
+TODO: gfx optimizations (e.g. don't need unsigned int)

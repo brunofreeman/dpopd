@@ -8,12 +8,12 @@ OBJ_DIR = obj
 BIN_DIR = bin
 GFX_DIR = gfx
 
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/$(GFX_DIR)/*.cpp)
 OBJECTS = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.cpp=.o))
 TARGET = $(BIN_DIR)/visualizer
 
 folders:
-	mkdir -p $(INC_DIR) & mkdir -p $(INC_DIR)/$(GFX_DIR) & mkdir -p $(SRC_DIR) & mkdir -p $(SRC_DIR)/$(GFX_DIR) & mkdir -p $(OBJ_DIR) & mkdir -p $(BIN_DIR)
+	mkdir -p $(INC_DIR) & mkdir -p $(INC_DIR)/$(GFX_DIR) & mkdir -p $(SRC_DIR) & mkdir -p $(SRC_DIR)/$(GFX_DIR) & mkdir -p $(OBJ_DIR) & mkdir -p $(OBJ_DIR)/$(GFX_DIR) & mkdir -p $(BIN_DIR)
 
 all: folders $(TARGET)
 
