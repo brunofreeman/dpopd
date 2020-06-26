@@ -6,18 +6,22 @@ INC_DIR = inc
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
+GFX_DIR = gfx
 
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.cpp=.o))
 TARGET = $(BIN_DIR)/visualizer
 
 folders:
-	mkdir -p $(INC_DIR) & mkdir -p $(SRC_DIR) & mkdir -p $(OBJ_DIR) & mkdir -p $(BIN_DIR)
+	mkdir -p $(INC_DIR) & mkdir -p $(INC_DIR)/$(GFX_DIR) & mkdir -p $(SRC_DIR) & mkdir -p $(SRC_DIR)/$(GFX_DIR) & mkdir -p $(OBJ_DIR) & mkdir -p $(BIN_DIR)
 
 all: folders $(TARGET)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CC) -c $(CPPFLAGS) $^ -o $@ -I$(INC_DIR)
+	$(CC) -c $(CPPFLAGS) $^ -o $@ -I$(INC_DIR) -I$(INC_DIR)/$(GFX_DIR)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/$(GFX_DIR)/%.cpp
+	$(CC) -c $(CPPFLAGS) $^ -o $@ -I$(INC_DIR) -I$(INC_DIR)/$(GFX_DIR)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)

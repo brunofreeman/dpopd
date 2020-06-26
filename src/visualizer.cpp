@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <GL/glew.h>
-#include <GL/glut.h>
 #include <GLFW/glfw3.h>
 #include "json_wrapper.hpp"
+#include "renderer.hpp"
 
 struct ShaderSource {
     std::string vertex_src;
@@ -109,7 +109,7 @@ static int make_window() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "dpo_pdf", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
@@ -124,35 +124,57 @@ static int make_window() {
 
     std::cout << "GL version: " << glGetString(GL_VERSION) << std::endl;
 
-    float positions[6] = {
-        -0.5f, -0.5f,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+    float positions[] = {
+        -0.5f, -0.5f, // 0
+         0.5f, -0.5f, // 1
+         0.5f,  0.5f, // 2
+        -0.5f,  0.5f  // 3
     };
 
-    unsigned int vertex_array_id;
-    glGenVertexArrays(1, &vertex_array_id);
-    glBindVertexArray(vertex_array_id);
+    unsigned int indices[] {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    unsigned int vertex_arr_id;
+    glGenVertexArrays(1, &vertex_arr_id);
+    glBindVertexArray(vertex_arr_id);
 
     unsigned int buffer_id;
     glGenBuffers(1, &buffer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_id); // sate machine
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
-    ShaderSource shader_src = parse_shaders("src/default.shader");
+    unsigned int idx_buff_id;
+    glGenBuffers(1, &idx_buff_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx_buff_id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    ShaderSource shader_src = parse_shaders("src/gfx/default.shader");
 
     unsigned int shader_id = create_shader(shader_src.vertex_src, shader_src.fragment_src);
     glUseProgram(shader_id);
+
+    int u_color_location = glGetUniformLocation(shader_id, "u_Color");
+    // ASSERT(location != -1);
+    glUniform4f(u_color_location, 0.2f, 0.3f, 0.8f, 1.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(shader_id);
+        glUniform4f(u_color_location, 0.2f, 0.3f, 0.8f, 1.0f);
+
+
+        glBindVertexArray(vertex_arr_id);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
