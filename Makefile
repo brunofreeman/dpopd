@@ -27,7 +27,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
-	rm -f $(OBJ_DIR)/* $(BIN_DIR)/*
+	rm -f $(OBJ_DIR)/*.o $(OBJ_DIR)/$(GFX_DIR)/*.o $(BIN_DIR)/*
 
 .PHONY: folders all clean
 .PRECIOUS: $(OBJ_DIR)/%.o

@@ -1,2 +1,3 @@
 TODO: integrate CMake
-TODO: gfx optimizations (e.g. don't need unsigned int)
+TODO: gfx optimizations
+    can use unsigned char instead of unsigned int for indexing

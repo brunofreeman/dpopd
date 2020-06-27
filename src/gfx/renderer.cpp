@@ -1,17 +1,14 @@
-#include <GL/glew.h>
 #include <iostream>
+#include <GL/glew.h>
 #include "renderer.hpp"
 
-void print_gl_version() {
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+void clear() {
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void gl_clear_error() {
-    while (glGetError() != GL_NO_ERROR);
-}
-
-void gl_check_error() {
-    while (GLenum error = glGetError()) {
-        std::cout << "[OpenGL Error] (" << error << ")" << std::endl;
-    }
+void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) {
+    shader.bind();
+    va.bind();
+    ib.bind();
+    glDrawElements(GL_TRIANGLES, ib.count, GL_UNSIGNED_INT, nullptr);
 }
