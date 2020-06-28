@@ -11,7 +11,10 @@
 #include "vertex_array.hpp"
 #include "shader.hpp"
 
-static int make_window();
+static int show_visualization();
+static void glfw_set_version(int major, int minor);
+static GLFWwindow* glfw_window_init(const std::string& window_name);
+static void glfw_window_resize_callback(GLFWwindow* window, int width, int height);
 
 int main(int argc, char** argv) {
     Environment* environment = json_environment("two_sqr_in_sqr");
@@ -20,36 +23,45 @@ int main(int argc, char** argv) {
 
     delete environment;
 
-    make_window();
-
-    return 0;
+    return show_visualization();
 }
 
-static int make_window() {
-    GLFWwindow* window;
-
-    if (!glfwInit()) {
-        return -1;
-    }
-
+static void glfw_set_version(int major, int minor) {
     // 4.1 INTEL-14.6.18, could use lower #version if neccesary
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+}
 
-    window = glfwCreateWindow(640, 480, "dpo_pdf", NULL, NULL);
+static GLFWwindow* glfw_window_init(const std::string& window_name) {
+    GLFWwindow* window;
+
+    if (!glfwInit()) return nullptr;
+
+    glfw_set_version(4, 1);
+
+    window = glfwCreateWindow(640, 480, window_name.c_str(), NULL, NULL);
     if (!window) {
         glfwTerminate();
-        return -1;
+        return nullptr;
     }
 
     glfwMakeContextCurrent(window);
 
-    if (glewInit() != GLEW_OK) {
-        return -1;
-    }
+    glfwSetWindowSizeCallback(window, glfw_window_resize_callback);
 
+    return window;
+}
+
+static void glfw_window_resize_callback(GLFWwindow* window, int width, int height) {
+    std::cout << "(" << width << ", " << height << ")" << std::endl;
+}
+
+static int show_visualization() {
+    GLFWwindow* window = glfw_window_init("dpo_pdf");
+    if (!window) return -1;
+    if (glewInit() != GLEW_OK) return -1;
     gl_print_version();
 
     float positions[] = {

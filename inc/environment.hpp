@@ -10,6 +10,7 @@ class Environment {
         Polygon* border;
         Polygon** obstacles;
         size_t obstacles_s;
+        double extremes[4];
         Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s);
         ~Environment();
         std::string to_string();

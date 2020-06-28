@@ -1,3 +1,5 @@
 TODO: integrate CMake
 TODO: gfx optimizations
     can use unsigned char instead of unsigned int for indexing
+TODO: shader filepath
+TODO: add licenses for dependencies
