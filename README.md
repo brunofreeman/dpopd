@@ -14,3 +14,7 @@ Thank you to these learning resources:
 https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2 (The Cherno's OpenGL series)
 
 https://github.com/mapbox/earcut.hpp (polygon triangulation)
+
+Assumptions:
+
+Environments are defined with all positive coordinates, with a minimum x and y both equal to 0.

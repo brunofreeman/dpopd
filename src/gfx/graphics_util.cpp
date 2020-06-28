@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <iostream>
-#include "gfx_util.hpp"
+#include "graphics_util.hpp"
 
 void gl_clear_error() {
     while (glGetError() != GL_NO_ERROR);

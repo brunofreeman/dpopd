@@ -1,8 +1,7 @@
 #ifndef __RENDERER_HPP__
 #define __RENDERER_HPP__
 
-#include "vertex_array.hpp"
-#include "index_buffer.hpp"
+#include "graphics_object.hpp"
 #include "shader.hpp"
 #include "environment.hpp"
 
@@ -14,7 +13,8 @@ struct RenderingBundle {
 
 void clear();
 void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
-RenderingBundle environment_rb(const Environment& environment);
+void draw(const GraphicsObject& obj, const Shader& shader);
+GraphicsObject environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding);
 
 
 #endif  // __RENDERER_HPP__

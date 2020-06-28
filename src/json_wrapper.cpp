@@ -11,7 +11,7 @@ nlohmann::json open_json(std::string filepath) {
 
 Polygon* json_polygon(nlohmann::json json_polygon) {
     size_t vertices_s = json_polygon.size();
-    Vector* vertices =  new Vector[vertices_s];
+    Vector* vertices = new Vector[vertices_s];
 
     for (size_t i = 0; i < vertices_s; i++) {
         Vector vertex(json_polygon[i][0], json_polygon[i][1]);

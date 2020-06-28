@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "json_wrapper.hpp"
-#include "gfx_util.hpp"
+#include "graphics_util.hpp"
 #include "renderer.hpp"
 #include "vertex_buffer.hpp"
 #include "index_buffer.hpp"
@@ -13,16 +13,10 @@
 
 static int show_visualization();
 static void glfw_set_version(int major, int minor);
-static GLFWwindow* glfw_window_init(const std::string& window_name);
+static GLFWwindow* glfw_window_init(const std::string& window_name, int width, int height);
 static void glfw_window_resize_callback(GLFWwindow* window, int width, int height);
 
 int main(int argc, char** argv) {
-    Environment* environment = json_environment("two_sqr_in_sqr");
-
-    std::cout << (*environment).to_string() << std::endl;
-
-    delete environment;
-
     return show_visualization();
 }
 
@@ -34,14 +28,14 @@ static void glfw_set_version(int major, int minor) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 }
 
-static GLFWwindow* glfw_window_init(const std::string& window_name) {
+static GLFWwindow* glfw_window_init(const std::string& window_name, int width, int height) {
     GLFWwindow* window;
 
     if (!glfwInit()) return nullptr;
 
     glfw_set_version(4, 1);
 
-    window = glfwCreateWindow(640, 480, window_name.c_str(), NULL, NULL);
+    window = glfwCreateWindow(width, height, window_name.c_str(), NULL, NULL);
     if (!window) {
         glfwTerminate();
         return nullptr;
@@ -59,39 +53,20 @@ static void glfw_window_resize_callback(GLFWwindow* window, int width, int heigh
 }
 
 static int show_visualization() {
-    GLFWwindow* window = glfw_window_init("dpo_pdf");
+    Environment* environment = json_environment("two_sqr_in_sqr");
+
+    int init_width = 640;
+    int init_height = 480;
+    GLFWwindow* window = glfw_window_init("dpo_pdf", init_width, init_height);
+
     if (!window) return -1;
     if (glewInit() != GLEW_OK) return -1;
+
     gl_print_version();
 
-    float positions[] = {
-        -0.5f, -0.5f, // 0
-         0.5f, -0.5f, // 1
-         0.5f,  0.5f, // 2
-        -0.5f,  0.5f  // 3
-    };
-
-    unsigned int indices[] {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
-
-    VertexBufferLayout layout;
-    layout.push_f(2);
-    va.add_buffer(vb, layout);
-
-    IndexBuffer ib(indices, 6);
+    GraphicsObject ego = environment_graphics_object(environment, init_width, init_height, 0.05f);
 
     Shader shader("src/gfx/_default.shader");
-    shader.bind();
-
-    va.unbind();
-    vb.unbind();
-    ib.unbind();
-    shader.unbind();
 
     float r = 0.0f;
     float inc = 0.05f;
@@ -102,7 +77,8 @@ static int show_visualization() {
         shader.bind();
         shader.set_uniform_4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        draw(va, ib, shader);
+        // draw(va, ib, shader);
+        draw(ego, shader);
 
         if (r > 1) inc = -0.05f;
         else if (r < 0) inc = 0.05f;
@@ -113,6 +89,8 @@ static int show_visualization() {
     }
 
     glfwTerminate();
+
+    delete environment;
 
     return 0;
 }
