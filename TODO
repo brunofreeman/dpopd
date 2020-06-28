@@ -1,5 +1,7 @@
 TODO: integrate CMake
 TODO: gfx optimizations
     can use unsigned char instead of unsigned int for indexing
-TODO: shader filepath
+TODO: shader filepath member var
 TODO: add licenses for dependencies
+TODO: remove min(x) = 0 and min(y) restriction on environments
+TODO: preserve environment aspect ratio on scale

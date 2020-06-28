@@ -53,7 +53,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int width, int heigh
 }
 
 static int show_visualization() {
-    Environment* environment = json_environment("two_sqr_in_sqr");
+    Environment* environment = json_environment("penta_in_hepta");
 
     int init_width = 640;
     int init_height = 480;
@@ -66,7 +66,7 @@ static int show_visualization() {
 
     GraphicsObject ego = environment_graphics_object(environment, init_width, init_height, 0.05f);
 
-    Shader shader("src/gfx/_default.shader");
+    Shader shader("src/gfx/_monochrome.shader");
 
     float r = 0.0f;
     float inc = 0.05f;
