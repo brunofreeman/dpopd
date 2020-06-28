@@ -37,8 +37,8 @@ GraphicsObject environment_graphics_object(Environment* environment, int screen_
     std::vector<Point> border_vertices;
     std::vector<Point> obstacles_vertices[(*environment).obstacles_s];
 
-    #define PUSH_X positions.push_back(x / 1000)//positions.push_back((scale * x + screen_width) / screen_width - 1)
-    #define PUSH_Y positions.push_back(y / 1000)//positions.push_back((scale * y + screen_height) / screen_height - 1)
+    #define PUSH_X positions.push_back(scale * (2 * x - (*environment).width) / screen_width)
+    #define PUSH_Y positions.push_back(scale * (2 * y - (*environment).height) / screen_height)
 
     for (size_t i = 0; i < (*((*environment).border)).vertices_s; i++) {
         float x = (*((*environment).border)).vertices[i].x;
