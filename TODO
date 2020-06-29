@@ -4,6 +4,7 @@ TODO: const/const reference C++ optimizations
 
 --Code Improvement--
 TODO: resize window and environment EGO code repetition
+TODO: visualizer.cpp magic numbers
 
 --Features--
 TODO: remove min(x) = 0 and min(y) restriction on environments
