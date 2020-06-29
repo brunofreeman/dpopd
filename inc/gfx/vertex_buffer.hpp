@@ -8,6 +8,7 @@ class VertexBuffer {
         unsigned int id;
         VertexBuffer(const void* data, size_t size);
         ~VertexBuffer();
+        void update_data(const void* data, size_t size) const;
         void bind() const;
         void unbind() const;
 };

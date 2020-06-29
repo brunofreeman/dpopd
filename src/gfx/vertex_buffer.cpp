@@ -12,6 +12,10 @@ VertexBuffer::~VertexBuffer() {
     glDeleteBuffers(1, &this->id);
 }
 
+void VertexBuffer::update_data(const void* data, size_t size) const {
+    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+}
+
 void VertexBuffer::bind() const {
     glBindBuffer(GL_ARRAY_BUFFER, id);
 }

@@ -22,11 +22,11 @@ void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) {
     glDrawElements(GL_TRIANGLES, ib.count, GL_UNSIGNED_INT, nullptr);
 }
 
-void draw(const GraphicsObject& obj, const Shader& shader) {
-    draw(*obj.va, *obj.ib, shader);
+void draw(GraphicsObject* obj, const Shader& shader) {
+    draw(*(*obj).va, *(*obj).ib, shader);
 }
 
-GraphicsObject environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding) {
+GraphicsObject* environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding) {
     std::vector<float> positions;
     double x_scale = (1 - 2 * padding) * screen_width / (*environment).width;
     double y_scale = (1 - 2 * padding) * screen_height / (*environment).height;
@@ -63,15 +63,6 @@ GraphicsObject environment_graphics_object(Environment* environment, int screen_
 
     std::vector<N> indices = mapbox::earcut<N>(environment_polygon);
 
-    /* std::cout << "positions:\n[";
-    for (auto i = positions.begin(); i != positions.end(); ++i)
-        std::cout << *i << ", ";
-
-    std::cout << "]\nindices:\n[";
-    for (auto i = indices.begin(); i != indices.end(); ++i)
-        std::cout << *i << ", ";
-    std::cout << "]" << std::endl; */
-
     size_t positions_s = positions.size();
     size_t indices_s = indices.size();
 
@@ -90,5 +81,5 @@ GraphicsObject environment_graphics_object(Environment* environment, int screen_
 
     IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
 
-    return GraphicsObject(va, vb, vbl, ib, positions_heap, indices_heap, positions_s, indices_s);
+    return new GraphicsObject(va, vb, vbl, ib, positions_heap, indices_heap, positions_s, indices_s);
 }

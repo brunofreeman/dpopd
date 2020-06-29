@@ -16,6 +16,10 @@ static void glfw_set_version(int major, int minor);
 static GLFWwindow* glfw_window_init(const std::string& window_name, int width, int height);
 static void glfw_window_resize_callback(GLFWwindow* window, int width, int height);
 
+Environment* environment;
+GraphicsObject* ego;
+float padding = 0.05f;
+
 int main(int argc, char** argv) {
     return show_visualization();
 }
@@ -48,12 +52,35 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
     return window;
 }
 
-static void glfw_window_resize_callback(GLFWwindow* window, int width, int height) {
-    std::cout << "(" << width << ", " << height << ")" << std::endl;
+static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, int screen_height) {
+    double x_scale = (1 - 2 * padding) * screen_width / (*environment).width;
+    double y_scale = (1 - 2 * padding) * screen_height / (*environment).height;
+    double scale = x_scale < y_scale ? x_scale : y_scale;
+
+    #define SET_X (*ego).positions[index++] = scale * (2 * x - (*environment).width) / screen_width
+    #define SET_Y (*ego).positions[index++] = scale * (2 * y - (*environment).height) / screen_height
+
+    size_t index = 0;
+
+    for (size_t i = 0; i < (*((*environment).border)).vertices_s; i++) {
+        float x = (*((*environment).border)).vertices[i].x;
+        float y = (*((*environment).border)).vertices[i].y;
+        SET_X; SET_Y;
+    }
+    
+    for (size_t i = 0; i < (*environment).obstacles_s; i++) {
+        for (size_t j = 0; j < (*((*environment).obstacles[i])).vertices_s; j++) {
+            float x = (*((*environment).obstacles[i])).vertices[j].x;
+            float y = (*((*environment).obstacles[i])).vertices[j].y;
+            SET_X; SET_Y;
+        }
+    }
+
+    glBufferData(GL_ARRAY_BUFFER, (*ego).positions_s * sizeof(float), (*ego).positions, GL_STATIC_DRAW);
 }
 
 static int show_visualization() {
-    Environment* environment = json_environment("penta_in_hepta");
+    environment = json_environment("penta_in_hepta");
 
     int init_width = 640;
     int init_height = 480;
@@ -64,7 +91,7 @@ static int show_visualization() {
 
     gl_print_version();
 
-    GraphicsObject ego = environment_graphics_object(environment, init_width, init_height, 0.05f);
+    ego = environment_graphics_object(environment, init_width, init_height, padding);
 
     Shader shader("src/gfx/_monochrome.shader");
 
@@ -77,7 +104,6 @@ static int show_visualization() {
         shader.bind();
         shader.set_uniform_4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        // draw(va, ib, shader);
         draw(ego, shader);
 
         if (r > 1) inc = -0.05f;

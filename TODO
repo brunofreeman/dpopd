@@ -1,7 +1,17 @@
-TODO: integrate CMake
-TODO: gfx optimizations
-    can use unsigned char instead of unsigned int for indexing
-TODO: shader filepath member var
-TODO: add licenses for dependencies
+--Optimization--
+TODO: use unsigned char instead of unsigned int for openGL indexing
+TODO: const/const reference C++ optimizations
+
+--Code Improvement--
+TODO: resize window and environment EGO code repetition
+
+--Features--
 TODO: remove min(x) = 0 and min(y) restriction on environments
-TODO: preserve environment aspect ratio on scale
+TODO: combine shader color set and draw into one call
+
+--Other--
+TODO: shader filepath member var
+
+--Project--
+TODO: add licenses for dependencies
+TODO: integrate CMake
