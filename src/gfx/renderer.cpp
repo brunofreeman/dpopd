@@ -26,6 +26,11 @@ void draw(GraphicsObject* obj, const Shader& shader) {
     draw(*(*obj).va, *(*obj).ib, shader);
 }
 
+void set_color(Shader& shader, const Color& color) {
+    shader.bind();
+    shader.set_uniform_4f("u_Color", color.r, color.g, color.b, color.a);
+}
+
 GraphicsObject* environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding) {
     std::vector<float> positions;
     double x_scale = (1 - 2 * padding) * screen_width / (*environment).width;

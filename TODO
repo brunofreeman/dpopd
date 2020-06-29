@@ -7,7 +7,6 @@ TODO: resize window and environment EGO code repetition
 
 --Features--
 TODO: remove min(x) = 0 and min(y) restriction on environments
-TODO: combine shader color set and draw into one call
 
 --Other--
 TODO: shader filepath member var

@@ -19,6 +19,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int width, int heigh
 Environment* environment;
 GraphicsObject* ego;
 float padding = 0.05f;
+Color environment_color(1.0f, 1.0f, 1.0f, 1.0f);
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -90,34 +91,20 @@ static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, in
 }
 
 static int show_visualization() {
-    environment = json_environment(environment_name);
-
     GLFWwindow* window = glfw_window_init(window_name, init_screen_width, init_screen_height);
-
     if (!window) return -1;
     if (glewInit() != GLEW_OK) return -1;
-
     gl_print_version();
 
+    environment = json_environment(environment_name);
     ego = environment_graphics_object(environment, init_screen_width, init_screen_height, padding);
-
     Shader shader(shader_path);
 
-    float r = 0.0f;
-    float inc = 0.05f;
+    set_color(shader, environment_color);
 
     while (!glfwWindowShouldClose(window)) {
         clear();
-
-        shader.bind();
-        shader.set_uniform_4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
         draw(ego, shader);
-
-        if (r > 1) inc = -0.05f;
-        else if (r < 0) inc = 0.05f;
-        r += inc;
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
