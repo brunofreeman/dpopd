@@ -5,8 +5,6 @@
 #include "renderer.hpp"
 #include "graphics_util.hpp"
 
-#include <iostream>
-
 using Coord = float;
 using N = unsigned int;
 using Point = std::array<Coord, 2>;
