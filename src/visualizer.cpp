@@ -20,6 +20,16 @@ Environment* environment;
 GraphicsObject* ego;
 float padding = 0.05f;
 
+char glfw_version_major = 4;
+char glfw_version_minor = 1;
+
+short init_screen_width = 640;
+short init_screen_height = 480;
+
+char environment_name[] = "penta_in_hepta";
+char window_name[] = "dpo_pdf";
+char shader_path[] = "src/gfx/_monochrome.shader";
+
 int main(int argc, char** argv) {
     return show_visualization();
 }
@@ -37,7 +47,7 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
 
     if (!glfwInit()) return nullptr;
 
-    glfw_set_version(4, 1);
+    glfw_set_version(glfw_version_major, glfw_version_minor);
 
     window = glfwCreateWindow(width, height, window_name.c_str(), NULL, NULL);
     if (!window) {
@@ -80,20 +90,18 @@ static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, in
 }
 
 static int show_visualization() {
-    environment = json_environment("penta_in_hepta");
+    environment = json_environment(environment_name);
 
-    int init_width = 640;
-    int init_height = 480;
-    GLFWwindow* window = glfw_window_init("dpo_pdf", init_width, init_height);
+    GLFWwindow* window = glfw_window_init(window_name, init_screen_width, init_screen_height);
 
     if (!window) return -1;
     if (glewInit() != GLEW_OK) return -1;
 
     gl_print_version();
 
-    ego = environment_graphics_object(environment, init_width, init_height, padding);
+    ego = environment_graphics_object(environment, init_screen_width, init_screen_height, padding);
 
-    Shader shader("src/gfx/_monochrome.shader");
+    Shader shader(shader_path);
 
     float r = 0.0f;
     float inc = 0.05f;
