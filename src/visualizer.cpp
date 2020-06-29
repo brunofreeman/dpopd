@@ -19,7 +19,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int width, int heigh
 Environment* environment;
 GraphicsObject* ego;
 float padding = 0.05f;
-Color environment_color(1.0f, 1.0f, 1.0f, 1.0f);
+Color environment_color(SILVER_RGB);
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -87,7 +87,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, in
         }
     }
 
-    glBufferData(GL_ARRAY_BUFFER, (*ego).positions_s * sizeof(float), (*ego).positions, GL_STATIC_DRAW);
+    (*(*ego).vb).update_data((*ego).positions, (*ego).positions_s * sizeof(float));
 }
 
 static int show_visualization() {
