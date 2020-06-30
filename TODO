@@ -4,13 +4,16 @@ TODO: const/const reference C++ optimizations
 
 --Code Improvement--
 TODO: resize window and environment EGO code repetition
+TODO: refactor external SFM code
+TODO: comments/documentation!
 
 --Features--
-TODO: remove min(x) = 0 and min(y) restriction on environments
+TODO: remove min(x) = 0 and min(y) = 0 restriction on environments
 
 --Other--
-TODO: shader filepath member var
+TODO: shader filepath member var -- necessary?
 
 --Project--
+TODO: make Readme nicer
 TODO: add licenses for dependencies
 TODO: integrate CMake
