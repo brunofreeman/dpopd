@@ -5,8 +5,7 @@
 #include "shader.hpp"
 #include "renderer.hpp"
 
-Shader::Shader(const std::string& filepath) : filepath(filepath), id(0) {
-    this->filepath = filepath;
+Shader::Shader(const std::string& filepath) : id(0) {
     ShaderSource shader_src = this->parse(filepath);
     this->id = this->create(shader_src.vertex_src, shader_src.fragment_src);
 }
@@ -66,7 +65,7 @@ unsigned int Shader::compile(unsigned int type, const std::string& shader_src) {
 }
 
 ShaderSource Shader::parse(const std::string& filepath) {
-    std::ifstream file_stream(this->filepath);
+    std::ifstream file_stream(filepath);
 
     enum class ShaderType {
         NONE     = -1,

@@ -33,5 +33,27 @@ Environment* json_environment(std::string filename) {
         obstacles[i] = obstacle;
     }
 
+    double min_x = INFINITY;
+    double min_y = INFINITY;
+
+    for (size_t i = 0; i < (*border).vertices_s; i++) {
+        float x = (*border).vertices[i].x;
+        float y = (*border).vertices[i].y;
+        if (x < min_x) min_x = x;
+        if (y < min_y) min_y = y;
+    }
+
+    for (size_t i = 0; i < (*border).vertices_s; i++) {
+        (*border).vertices[i].x -= min_x;
+        (*border).vertices[i].y -= min_y;
+    }
+
+    for (size_t i = 0; i < obstacles_s; i++) {
+        for (size_t j = 0; j < (*obstacles)[i].vertices_s; j++) {
+            (*obstacles)[i].vertices[j].x -= min_x;
+            (*obstacles)[i].vertices[j].y -= min_y;
+        }
+    }
+
     return new Environment(border, obstacles, obstacles_s);
 }

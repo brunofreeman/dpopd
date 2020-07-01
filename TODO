@@ -10,10 +10,9 @@ TODO: comments/documentation!
 --Features--
 TODO: remove min(x) = 0 and min(y) = 0 restriction on environments
 
---Other--
-TODO: shader filepath member var -- necessary?
-
 --Project--
 TODO: make Readme nicer
 TODO: add licenses for dependencies
 TODO: integrate CMake
+
+--Other--
