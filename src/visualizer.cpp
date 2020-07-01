@@ -64,30 +64,7 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
 }
 
 static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, int screen_height) {
-    double x_scale = (1 - 2 * padding) * screen_width / (*environment).width;
-    double y_scale = (1 - 2 * padding) * screen_height / (*environment).height;
-    double scale = x_scale < y_scale ? x_scale : y_scale;
-
-    #define SET_X (*ego).positions[index++] = scale * (2 * x - (*environment).width) / screen_width
-    #define SET_Y (*ego).positions[index++] = scale * (2 * y - (*environment).height) / screen_height
-
-    size_t index = 0;
-
-    for (size_t i = 0; i < (*((*environment).border)).vertices_s; i++) {
-        float x = (*((*environment).border)).vertices[i].x;
-        float y = (*((*environment).border)).vertices[i].y;
-        SET_X; SET_Y;
-    }
-    
-    for (size_t i = 0; i < (*environment).obstacles_s; i++) {
-        for (size_t j = 0; j < (*((*environment).obstacles[i])).vertices_s; j++) {
-            float x = (*((*environment).obstacles[i])).vertices[j].x;
-            float y = (*((*environment).obstacles[i])).vertices[j].y;
-            SET_X; SET_Y;
-        }
-    }
-
-    (*(*ego).vb).update_data((*ego).positions, (*ego).positions_s * sizeof(float));
+    scale_environment_positions(ego, environment, screen_width, screen_height, padding);
 }
 
 static int show_visualization() {

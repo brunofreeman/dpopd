@@ -3,7 +3,6 @@ TODO: use unsigned char instead of unsigned int for openGL indexing
 TODO: const/const reference C++ optimizations
 
 --Code Improvement--
-TODO: resize window and environment EGO code repetition
 TODO: refactor external SFM code
 TODO: comments/documentation!
 
