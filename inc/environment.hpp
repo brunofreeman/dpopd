@@ -12,7 +12,7 @@ class Environment {
         size_t obstacles_s;
         double width;
         double height;
-        // assumed to be all positive coords, min(x) = 0, min(y) = 0
+        // json_wrapper normalizes for rendering by making min(x) = 0 and min(y) = 0
         Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s);
         ~Environment();
         std::string to_string();
