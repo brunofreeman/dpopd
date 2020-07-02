@@ -2,6 +2,8 @@
 #include <nlohmann/json.hpp>
 #include "json_wrapper.hpp"
 
+#include <iostream>
+
 nlohmann::json open_json(std::string filepath) {
     std::ifstream in(filepath);
     nlohmann::json json;
@@ -17,7 +19,7 @@ Polygon* json_polygon(nlohmann::json json_polygon) {
         Vector vertex(json_polygon[i][0], json_polygon[i][1]);
         vertices[i] = vertex;
     }
-    
+
     return new Polygon(vertices, vertices_s);
 }
 
@@ -33,25 +35,25 @@ Environment* json_environment(std::string filename) {
         obstacles[i] = obstacle;
     }
 
-    double min_x = INFINITY;
-    double min_y = INFINITY;
+    double min_x = border->vertices[0].x;
+    double min_y = border->vertices[0].y;
 
-    for (size_t i = 0; i < (*border).vertices_s; i++) {
-        float x = (*border).vertices[i].x;
-        float y = (*border).vertices[i].y;
+    for (size_t i = 1; i < border->vertices_s; i++) {
+        float x = border->vertices[i].x;
+        float y = border->vertices[i].y;
         if (x < min_x) min_x = x;
         if (y < min_y) min_y = y;
     }
 
-    for (size_t i = 0; i < (*border).vertices_s; i++) {
-        (*border).vertices[i].x -= min_x;
-        (*border).vertices[i].y -= min_y;
+    for (size_t i = 0; i < border->vertices_s; i++) {
+        border->vertices[i].x -= min_x;
+        border->vertices[i].y -= min_y;
     }
 
     for (size_t i = 0; i < obstacles_s; i++) {
-        for (size_t j = 0; j < (*obstacles)[i].vertices_s; j++) {
-            (*obstacles)[i].vertices[j].x -= min_x;
-            (*obstacles)[i].vertices[j].y -= min_y;
+        for (size_t j = 0; j < obstacles[i]->vertices_s; j++) {
+            obstacles[i]->vertices[j].x -= min_x;
+            obstacles[i]->vertices[j].y -= min_y;
         }
     }
 

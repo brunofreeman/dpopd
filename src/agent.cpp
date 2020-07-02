@@ -7,20 +7,23 @@ std::default_random_engine generator;
 Agent::Agent() {
 	this->id = ++this->crowd_idx;
 	
-	this->radius = 0.2F;
+	this->radius = 3.0f;
 
 	// Desired Speed Based on (Moussaid et al., 2009)
 	std::normal_distribution<float> distribution(1.29F, 0.19F);	// Generate random value of mean 1.29 and standard deviation 0.19
 	this->desired_speed = distribution(generator);
+
+	this->shape = nullptr;
 }
 
 Agent::~Agent() {
 	this->path.clear();				// Remove waypoints
 	this->crowd_idx--;
-	delete this->shape;
+	if (this->shape != nullptr) delete this->shape;
 }
 
-void Agent::init_shape() {
+void Agent::update_shape() {
+	if (this->shape != nullptr) delete this->shape;
     this->shape = regular_ngon(this->position, this->radius, this->shape_sides);
 }
 

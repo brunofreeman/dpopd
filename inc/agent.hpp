@@ -36,7 +36,7 @@ class Agent {
         Agent();
         ~Agent();
 
-        void init_shape();
+        void update_shape();
 
         void push_waypoint(float x, float y, float radius);
 

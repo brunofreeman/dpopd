@@ -25,9 +25,9 @@ Environment::~Environment() {
 }
 
 bool Environment::is_interior_point(const Vector& point) const {
-	if (!(*this->border).is_interior_point(point)) return false;
+	if (!this->border->is_interior_point(point)) return false;
     for (size_t i = 0; i < this->obstacles_s; i++) {
-        if ((*this->obstacles)[i].is_interior_point(point)) return false;
+        if (this->obstacles[i]->is_interior_point(point)) return false;
     }
     return true;
 }

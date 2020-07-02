@@ -13,6 +13,7 @@ bool Polygon::is_interior_point(const Vector& point) const {
     for (size_t i = 0; i < this->vertices_s; i++) {
         if (this->vertices[i].x > max_x) max_x = this->vertices[i].x;
     }
+
 	Segment pos_x_ray = {point, Vector(max_x + 1, point.y)};
 	size_t intersections = 0;
     size_t curr_idx = 0;

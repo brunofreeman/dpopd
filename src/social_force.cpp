@@ -1,5 +1,4 @@
 #include "social_force.hpp"
-using namespace std;
 
 SocialForce::~SocialForce() {
 	this->delete_crowd();
