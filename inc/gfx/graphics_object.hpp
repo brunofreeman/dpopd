@@ -6,6 +6,7 @@
 
 class GraphicsObject {
     public:
+        void* obj;
         VertexArray* va;
         VertexBuffer* vb;
         VertexBufferLayout* vbl;
@@ -14,11 +15,12 @@ class GraphicsObject {
         unsigned int* indices;
         size_t positions_s;
         size_t indices_s;
-        GraphicsObject(VertexArray* va, VertexBuffer* vb, VertexBufferLayout* vbl, IndexBuffer* ib,
+        GraphicsObject(void* obj, VertexArray* va, VertexBuffer* vb, VertexBufferLayout* vbl, IndexBuffer* ib,
                        float* positions, unsigned int* indices, size_t positions_s, size_t indices_s) :
-            va(va), vb(vb), vbl(vbl), ib(ib),
+            obj(obj), va(va), vb(vb), vbl(vbl), ib(ib),
             positions(positions), indices(indices), positions_s(positions_s), indices_s(indices_s) {}
         ~GraphicsObject();
+        void bind() const;
 };
 
 #endif // #ifndef __GRAPHICS_OBJECT_HPP__

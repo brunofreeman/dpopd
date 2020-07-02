@@ -1,8 +1,6 @@
 #include <random>
 #include "agent.hpp"
 
-const float PI = 3.14159265359F;
-
 int Agent::crowd_idx = -1;
 std::default_random_engine generator;
 
@@ -19,6 +17,11 @@ Agent::Agent() {
 Agent::~Agent() {
 	this->path.clear();				// Remove waypoints
 	this->crowd_idx--;
+	delete this->shape;
+}
+
+void Agent::init_shape() {
+    this->shape = regular_ngon(this->position, this->radius, this->shape_sides);
 }
 
 void Agent::push_waypoint(float x, float y, float radius) {
@@ -52,7 +55,7 @@ Vector Agent::immediate_goal() {
 }
 
 float Agent::orientation() const {
-	return (atan2(this->velocity.y, this->velocity.x) * (180 / PI));
+	return (atan2(this->velocity.y, this->velocity.x) * (180 / M_PI));
 }
 
 Vector Agent::ahead_vec() const {

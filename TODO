@@ -4,9 +4,11 @@ TODO: const/const reference C++ optimizations
 
 --Code Improvement--
 TODO: refactor external SFM code
+        * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
 
 --Features--
+TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
 
 --Project--
 TODO: make Readme nicer
@@ -14,3 +16,4 @@ TODO: add licenses for dependencies
 TODO: integrate CMake
 
 --Other--
+TODO: why is crowd_idx static

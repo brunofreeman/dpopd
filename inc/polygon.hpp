@@ -11,7 +11,10 @@ class Polygon {
         size_t vertices_s;
         Polygon(Vector* vertices, const size_t vertices_s);
         ~Polygon();
-        std::string to_string();
+        bool is_interior_point(const Vector& point) const;
+        std::string to_string() const;
 };
+
+Polygon* regular_ngon(const Vector& center, double r, size_t n);
 
 #endif // #ifndef __POLYGON_HPP__

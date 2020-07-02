@@ -12,14 +12,14 @@ VertexBuffer::~VertexBuffer() {
     glDeleteBuffers(1, &this->id);
 }
 
-void VertexBuffer::update_data(const void* data, size_t size) const {
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-}
-
 void VertexBuffer::bind() const {
-    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glBindBuffer(GL_ARRAY_BUFFER, this->id);
 }
 
 void VertexBuffer::unbind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void set_vb_data(const void* data, size_t size) {
+    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }

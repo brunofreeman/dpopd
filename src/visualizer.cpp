@@ -15,11 +15,17 @@ static int show_visualization();
 static void glfw_set_version(int major, int minor);
 static GLFWwindow* glfw_window_init(const std::string& window_name, int width, int height);
 static void glfw_window_resize_callback(GLFWwindow* window, int width, int height);
+static void init_random();
+static void init_agent();
 
 Environment* environment;
 GraphicsObject* ego;
 float padding = 0.05f;
 Color environment_color(SILVER_RGB);
+
+Agent* agent;
+GraphicsObject* ago;
+Color agent_color(ORANGE_RGB);
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -32,6 +38,7 @@ char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
 int main(int argc, char** argv) {
+    init_random();
     return show_visualization();
 }
 
@@ -65,6 +72,19 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
 
 static void glfw_window_resize_callback(GLFWwindow* window, int screen_width, int screen_height) {
     scale_environment_positions(ego, environment, screen_width, screen_height, padding);
+    scale_polygon_positions(ago, environment, screen_width, screen_height, padding);
+}
+
+static void init_random() {
+    srand(time(NULL));
+    srand48(time(NULL));
+}
+
+static void init_agent() {
+    agent = new Agent();
+    (*agent).radius = 3.0f;
+    (*agent).position = (*environment).random_interior_point();
+    (*agent).init_shape();
 }
 
 static int show_visualization() {
@@ -75,13 +95,16 @@ static int show_visualization() {
 
     environment = json_environment(environment_name);
     ego = environment_graphics_object(environment, init_screen_width, init_screen_height, padding);
+    init_agent();
+    ago = agent_graphics_object(agent, environment, init_screen_width, init_screen_height, padding);
     Shader shader(shader_path);
-
-    set_color(shader, environment_color);
 
     while (!glfwWindowShouldClose(window)) {
         clear();
+        set_color(shader, environment_color);
         draw(ego, shader);
+        set_color(shader, agent_color);
+        draw(ago, shader);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -89,6 +112,7 @@ static int show_visualization() {
     glfwTerminate();
 
     delete environment;
+    delete agent;
 
     return 0;
 }

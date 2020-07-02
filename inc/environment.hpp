@@ -15,7 +15,9 @@ class Environment {
         // json_wrapper normalizes for rendering by making min(x) = 0 and min(y) = 0
         Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s);
         ~Environment();
-        std::string to_string();
+        bool is_interior_point(const Vector& point) const;
+        Vector random_interior_point() const;
+        std::string to_string() const;
 };
 
 #endif // #ifndef __ENVIRONMENT_HPP__

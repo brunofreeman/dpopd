@@ -6,6 +6,7 @@
 #include "wall.hpp"
 #include "vector.hpp"
 #include "gfx/color.hpp"
+#include "polygon.hpp"
 
 struct Waypoint {
 	Vector position;
@@ -15,6 +16,9 @@ struct Waypoint {
 class Agent {
     public:
         static int crowd_idx;	// Keep track of 'crowd' vector index in 'SocialForce.h'
+        static const size_t shape_sides = 10;
+
+        Polygon* shape;
 
         int id;
         float radius;
@@ -31,6 +35,8 @@ class Agent {
 
         Agent();
         ~Agent();
+
+        void init_shape();
 
         void push_waypoint(float x, float y, float radius);
 

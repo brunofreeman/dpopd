@@ -8,3 +8,9 @@ GraphicsObject::~GraphicsObject() {
     delete[] this->positions;
     delete[] this->indices;
 }
+
+void GraphicsObject::bind() const {
+    (*this->va).bind();
+    (*this->vb).bind();
+    (*this->ib).bind();
+}
