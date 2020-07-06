@@ -2,8 +2,6 @@
 #include <nlohmann/json.hpp>
 #include "json_wrapper.hpp"
 
-#include <iostream>
-
 nlohmann::json open_json(std::string filepath) {
     std::ifstream in(filepath);
     nlohmann::json json;
@@ -45,15 +43,17 @@ Environment* json_environment(std::string filename) {
         if (y < min_y) min_y = y;
     }
 
+    double scale = json_env[JSON_ID_SCALE];
+    
+    #define NORM_AND_SCALE(src) src.x -= min_x; src.y -= min_y; src.x *= scale; src.y *= scale;
+
     for (size_t i = 0; i < border->vertices_s; i++) {
-        border->vertices[i].x -= min_x;
-        border->vertices[i].y -= min_y;
+        NORM_AND_SCALE(border->vertices[i]);
     }
 
     for (size_t i = 0; i < obstacles_s; i++) {
         for (size_t j = 0; j < obstacles[i]->vertices_s; j++) {
-            obstacles[i]->vertices[j].x -= min_x;
-            obstacles[i]->vertices[j].y -= min_y;
+            NORM_AND_SCALE(obstacles[i]->vertices[j]);
         }
     }
 

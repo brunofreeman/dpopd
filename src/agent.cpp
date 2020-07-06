@@ -7,10 +7,10 @@ std::default_random_engine generator;
 Agent::Agent() {
 	this->id = ++this->crowd_idx;
 	
-	this->radius = 3.0f;
+	this->radius = 0.2f;
 
 	// Desired Speed Based on (Moussaid et al., 2009)
-	std::normal_distribution<float> distribution(1.29F, 0.19F);	// Generate random value of mean 1.29 and standard deviation 0.19
+	std::normal_distribution<float> distribution(1.29f, 0.19f);	// Generate random value of mean 1.29 and standard deviation 0.19
 	this->desired_speed = distribution(generator);
 
 	this->shape = nullptr;
@@ -85,7 +85,7 @@ void Agent::move(std::vector<Agent *> agents, std::vector<Wall *> walls, float s
 }
 
 Vector Agent::driving_force(const Vector position_target) {
-	const float T = 0.54F;	// Relaxation time based on (Moussaid et al., 2009)
+	const float T = 0.54f;	// Relaxation time based on (Moussaid et al., 2009)
 	Vector e_i, f_i;
 
 	// Compute Desired Direction
@@ -103,7 +103,7 @@ Vector Agent::driving_force(const Vector position_target) {
 Vector Agent::agent_interaction_force(std::vector<Agent *> agents) {
 	// Constant Values Based on (Moussaid et al., 2009)
 	const float lambda = 2.0;	// Weight reflecting relative importance of velocity vector against position vector
-	const float gamma = 0.35F;	// Speed interaction
+	const float gamma = 0.35f;	// Speed interaction
 	const float n_prime = 3.0;	// Angular interaction
 	const float n = 2.0;		// Angular intaraction
 	const float A = 4.5;		// Modal parameter A
@@ -170,9 +170,9 @@ Vector Agent::agent_interaction_force(std::vector<Agent *> agents) {
 }
 
 Vector Agent::wall_interaction_force(std::vector<Wall *> walls) {
-	//const float repulsionRange = 0.3F;	// Repulsion range based on (Moussaid et al., 2009)
+	//const float repulsionRange = 0.3f;	// Repulsion range based on (Moussaid et al., 2009)
 	const int a = 3;
-	const float b = 0.1F;
+	const float b = 0.1f;
 
 	Vector nearest_point;
 	Vector vector_wi, minVector_wi;

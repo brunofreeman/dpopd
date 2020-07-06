@@ -7,6 +7,7 @@
 #define MDL_PATH "./def/mdl/"
 #define JSON_ID_BORDER "border"
 #define JSON_ID_OBSTACLES "obstacles"
+#define JSON_ID_SCALE "scale"
 
 Environment* json_environment(std::string filename);
 

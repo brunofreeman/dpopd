@@ -31,7 +31,7 @@ GraphicsObject** agos;
 Color agent_color(ORANGE_RGB);
 
 SocialForce* social_force;
-size_t num_agents = 25;
+size_t num_agents = 10;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -126,6 +126,7 @@ static int show_visualization() {
     Shader shader(shader_path);
 
     environment = json_environment(environment_name);
+    std::cout << environment->to_string() << std::endl;
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
     social_force = new SocialForce();
