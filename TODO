@@ -10,7 +10,6 @@ TODO: const/const reference C++ optimizations
 TODO: refactor external SFM code
         * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
-TODO: (*ptr). vs ptr->
 TODO: better implementation of agent shape update
 TODO: don't use rescaling when only translating is necessary
 TODO: make visualizer more abstracted for future flexibility
@@ -27,4 +26,3 @@ TODO: add licenses for dependencies
 TODO: integrate CMake
 
 --Other--
-TODO: why is crowd_idx static

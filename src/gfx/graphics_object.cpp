@@ -10,7 +10,7 @@ GraphicsObject::~GraphicsObject() {
 }
 
 void GraphicsObject::bind() const {
-    (*this->va).bind();
-    (*this->vb).bind();
-    (*this->ib).bind();
+    this->va->bind();
+    this->vb->bind();
+    this->ib->bind();
 }
