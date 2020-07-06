@@ -112,7 +112,7 @@ GraphicsObject* environment_graphics_object(Environment* environment, int screen
 
     VertexBufferLayout* vbl = new VertexBufferLayout();
     vbl->push_f(2); // two floats per vertex: (x, y)
-    va->add_buffer(*vb, *vbl);
+    va->add_buffer(vb, vbl);
 
     IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
 
@@ -147,7 +147,7 @@ GraphicsObject* agent_graphics_object(Agent* agent, Environment* environment, in
 
     VertexBufferLayout* vbl = new VertexBufferLayout();
     vbl->push_f(2); // two floats per vertex: (x, y)
-    va->add_buffer(*vb, *vbl);
+    va->add_buffer(vb, vbl);
 
     IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
 

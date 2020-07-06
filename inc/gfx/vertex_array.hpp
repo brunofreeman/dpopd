@@ -10,7 +10,7 @@ class VertexArray {
         ~VertexArray();
         void bind() const;
         void unbind() const;
-        void add_buffer(const VertexBuffer& vertex_buffer, const VertexBufferLayout& layout);
+        void add_buffer(const VertexBuffer* vertex_buffer, const VertexBufferLayout* layout);
 };
 
 #endif  // __VERTEX_ARRAY_HPP__
