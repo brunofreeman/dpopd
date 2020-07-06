@@ -3,6 +3,7 @@
 
 #define min(a, b) a < b ? a : b
 #define max(a, b) a > b ? a : b
+#define square(a) a*a
 
 std::string Vector::to_string() {
     return "(" + std::to_string(this->x) + ", "
@@ -19,7 +20,7 @@ void Vector::set(double x, double y) {
 }
 
 double Vector::norm_squared() const {
-    return  this->x*this->x + this->y*this->y;
+    return square(this->x) + square(this->y);
 }
 
 double Vector::norm() const {
@@ -71,7 +72,7 @@ Vector operator*(const double& scalar, const Vector& vec) {
 }
 
 double dot(const Vector& vec1, const Vector& vec2) {
-    return vec1.x*vec2.x + vec1.y*vec2.y;
+    return vec1.x * vec2.x + vec1.y * vec2.y;
 }
 
 // returns the smallest angle between the vectors
@@ -104,4 +105,22 @@ bool check_intersect(const Segment& seg1, const Segment& seg2)  {
     return false; */
 
     return o1 != o2 && o3 != o4;
+}
+
+double length(const Segment& seg) {
+    return sqrt(
+        square(seg.p2.x - seg.p1.x) +
+        square(seg.p2.y - seg.p1.y)
+    );
+}
+
+double distance(const Vector& point, const Segment& seg) {
+    double distance = abs(
+        (seg.p2.y - seg.p1.y) * point.x -
+        (seg.p2.x - seg.p1.x) * point.y +
+        seg.p2.x * seg.p1.y -
+        seg.p2.y * seg.p1.x
+    );
+    distance /= length(seg);
+    return distance;
 }

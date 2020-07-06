@@ -11,6 +11,7 @@ class Polygon {
         size_t vertices_s;
         Polygon(Vector* vertices, const size_t vertices_s);
         ~Polygon();
+        bool is_interior_point(const Vector& point, double radius) const;
         bool is_interior_point(const Vector& point) const;
         std::string to_string() const;
 };

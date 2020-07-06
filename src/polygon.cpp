@@ -8,7 +8,7 @@ Polygon::~Polygon() {
     delete[] this->vertices;
 }
 
-bool Polygon::is_interior_point(const Vector& point) const {
+bool Polygon::is_interior_point(const Vector& point, double radius) const {
     double max_x = 0;
     for (size_t i = 0; i < this->vertices_s; i++) {
         if (this->vertices[i].x > max_x) max_x = this->vertices[i].x;
@@ -20,14 +20,17 @@ bool Polygon::is_interior_point(const Vector& point) const {
 
 	do {
 		size_t next_idx = (curr_idx + 1) % this->vertices_s;
-		if (check_intersect((Segment){this->vertices[curr_idx],
-                                      this->vertices[next_idx]}, pos_x_ray)) {
-			intersections++;
-		}
+        Segment seg = {this->vertices[curr_idx], this->vertices[next_idx]};
+        if (distance(point, seg) < radius) return false;
+		if (check_intersect(seg, pos_x_ray)) intersections++;
 		curr_idx = next_idx;
 	} while (curr_idx != 0);
 
 	return intersections % 2 == 1;
+}
+
+bool Polygon::is_interior_point(const Vector& point) const {
+    return this->is_interior_point(point, 0.0f);
 }
 
 std::string Polygon::to_string() const {

@@ -110,8 +110,8 @@ static void create_agents() {
     Agent* agent;
     for (size_t i = 0; i < num_agents; i++) {
         agent = new Agent();
-        agent->position = environment->random_interior_point();
-        agent->path.push_back((Waypoint){environment->random_interior_point(), 3.0f});
+        agent->position = environment->random_interior_point(agent->radius);
+        agent->path.push_back((Waypoint){environment->random_interior_point(agent->radius), 3.0f});
         agent->update_shape();
         social_force->add_agent(agent);
     }
@@ -126,7 +126,6 @@ static int show_visualization() {
     Shader shader(shader_path);
 
     environment = json_environment(environment_name);
-    std::cout << environment->to_string() << std::endl;
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
     social_force = new SocialForce();
@@ -144,7 +143,7 @@ static int show_visualization() {
         auto curr_time = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = curr_time - prev_time;
         prev_time = curr_time;
-        social_force->move_crowd(10 * elapsed_seconds.count());
+        social_force->move_crowd(elapsed_seconds.count());
 
         clear();
 

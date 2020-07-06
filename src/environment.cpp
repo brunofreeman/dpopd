@@ -24,20 +24,24 @@ Environment::~Environment() {
     delete[] this->obstacles;
 }
 
-bool Environment::is_interior_point(const Vector& point) const {
-	if (!this->border->is_interior_point(point)) return false;
+bool Environment::is_interior_point(const Vector& point, double radius) const {
+	if (!this->border->is_interior_point(point, radius)) return false;
     for (size_t i = 0; i < this->obstacles_s; i++) {
-        if (this->obstacles[i]->is_interior_point(point)) return false;
+        if (this->obstacles[i]->is_interior_point(point, radius)) return false;
     }
     return true;
 }
 
-Vector Environment::random_interior_point() const {
+Vector Environment::random_interior_point(double radius) const {
     Vector point;
     do {
         point.set(drand48() * this->width, drand48() * this->height);
-    } while (!this->is_interior_point(point));
+    } while (!this->is_interior_point(point, radius));
     return point;
+}
+
+Vector Environment::random_interior_point() const {
+    return this->random_interior_point(0.0f);
 }
 
 std::string Environment::to_string() const {
