@@ -44,7 +44,7 @@ bool on_segment(const Vector& point, const Segment& seg);
 Orientation orientation(const Vector& p, const Vector& q, const Vector& r);
 bool check_intersect(const Segment& seg1, const Segment& seg2);
 
-double length(const Segment& seg);
+double length(const Segment&);
 double distance(const Vector& point, const Segment& seg);
 
 #endif // #ifndef __VECTOR_HPP__

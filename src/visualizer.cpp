@@ -11,7 +11,7 @@
 #include "index_buffer.hpp"
 #include "vertex_array.hpp"
 #include "shader.hpp"
-#include "social_force.hpp"
+#include "move_model.hpp"
 
 static int show_visualization();
 static void glfw_set_version(int major, int minor);
@@ -30,7 +30,8 @@ Color environment_color(SILVER_RGB);
 GraphicsObject** agos;
 Color agent_color(ORANGE_RGB);
 
-SocialForce* social_force;
+MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
+MoveModel* move_model;
 size_t num_agents = 10;
 
 char glfw_version_major = 4;
@@ -80,7 +81,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int new_screen_width
     screen_width = new_screen_width;
     screen_height = new_screen_height;
     scale_environment_positions(ego, environment, screen_width, screen_height, padding);
-    for (size_t i = 0; i < social_force->crowd.size(); i++) {
+    for (size_t i = 0; i < move_model->crowd.size(); i++) {
         scale_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
     }
 }
@@ -94,7 +95,7 @@ static void add_polygon_walls(Polygon* polygon) {
     size_t curr_idx = 0;
 	do {
 		size_t next_idx = (curr_idx + 1) % polygon->vertices_s;
-        social_force->add_wall(new Wall(polygon->vertices[curr_idx], polygon->vertices[next_idx]));
+        move_model->add_wall(new Wall(polygon->vertices[curr_idx], polygon->vertices[next_idx]));
 		curr_idx = next_idx;
 	} while (curr_idx != 0);
 }
@@ -109,11 +110,11 @@ static void create_walls() {
 static void create_agents() {
     Agent* agent;
     for (size_t i = 0; i < num_agents; i++) {
-        agent = new Agent();
+        agent = new Agent(move_model_type);
         agent->position = environment->random_interior_point(agent->radius);
         agent->path.push_back((Waypoint){environment->random_interior_point(agent->radius), 3.0f});
         agent->update_shape();
-        social_force->add_agent(agent);
+        move_model->add_agent(agent);
     }
 }
 
@@ -128,13 +129,13 @@ static int show_visualization() {
     environment = json_environment(environment_name);
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
-    social_force = new SocialForce();
+    move_model = new MoveModel();
     create_walls();
     create_agents();
 
-    agos = new GraphicsObject*[social_force->crowd.size()];
-    for (size_t i = 0; i < social_force->crowd.size(); i++) {
-        agos[i] = agent_graphics_object(social_force->crowd[i], environment, screen_width, screen_height, padding);
+    agos = new GraphicsObject*[move_model->crowd.size()];
+    for (size_t i = 0; i < move_model->crowd.size(); i++) {
+        agos[i] = agent_graphics_object(move_model->crowd[i], environment, screen_width, screen_height, padding);
     }
 
     auto prev_time = std::chrono::system_clock::now();
@@ -143,7 +144,12 @@ static int show_visualization() {
         auto curr_time = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = curr_time - prev_time;
         prev_time = curr_time;
-        social_force->move_crowd(elapsed_seconds.count());
+        
+        switch (move_model_type) {
+            case SOCIAL_FORCE_MODEL:
+                move_model->sfm_move_crowd(elapsed_seconds.count());
+                break;
+        }
 
         clear();
 
@@ -151,9 +157,9 @@ static int show_visualization() {
         draw(ego, shader);
 
         set_color(shader, agent_color);
-        for (size_t i = 0; i < social_force->crowd.size(); i++) {
-            social_force->crowd[i]->update_shape();
-            agos[i]->obj = social_force->crowd[i]->shape;
+        for (size_t i = 0; i < move_model->crowd.size(); i++) {
+            move_model->crowd[i]->update_shape();
+            agos[i]->obj = move_model->crowd[i]->shape;
             scale_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
         }
@@ -165,7 +171,7 @@ static int show_visualization() {
     glfwTerminate();
 
     delete environment;
-    delete social_force;
+    delete move_model;
     delete[] agos;
 
     return 0;

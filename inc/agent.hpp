@@ -8,6 +8,10 @@
 #include "gfx/color.hpp"
 #include "polygon.hpp"
 
+enum MoveModelType {
+    SOCIAL_FORCE_MODEL = 0
+};
+
 struct Waypoint {
 	Vector position;
 	float radius;
@@ -15,7 +19,7 @@ struct Waypoint {
 
 class Agent {
     public:
-        static int crowd_idx;	// Keep track of 'crowd' vector index in 'SocialForce.h'
+        static int crowd_idx;
         static const size_t shape_sides = 10;
 
         Polygon* shape;
@@ -29,11 +33,7 @@ class Agent {
         std::deque<Waypoint> path;
         Vector velocity;
 
-        Vector driving_force(const Vector position_target);		// Computes f_i
-        Vector agent_interaction_force(std::vector<Agent *> agents);	// Computes f_ij
-        Vector wall_interaction_force(std::vector<Wall *> walls);		// Computes f_iw
-
-        Agent();
+        Agent(const MoveModelType& move_model_type);
         ~Agent();
 
         void update_shape();
@@ -44,7 +44,10 @@ class Agent {
         float orientation() const;
         Vector ahead_vec() const;
 
-        void move(std::vector<Agent *> agents, std::vector<Wall *> walls, float step_time);
+        Vector sfm_driving_force(const Vector position_target);		    // Computes f_i
+        Vector sfm_agent_interaction_force(std::vector<Agent*> agents);	// Computes f_ij
+        Vector sfm_wall_interaction_force(std::vector<Wall*> walls);    // Computes f_iw
+        void sfm_move(std::vector<Agent*> agents, std::vector<Wall*> walls, float step_time);
 };
 
 #endif // #ifndef __AGENT_HPP__

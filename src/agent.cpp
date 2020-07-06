@@ -4,20 +4,22 @@
 int Agent::crowd_idx = -1;
 std::default_random_engine generator;
 
-Agent::Agent() {
+Agent::Agent(const MoveModelType& move_model_type) {
 	this->id = ++this->crowd_idx;
-	
-	this->radius = 0.2f;
 
-	// Desired Speed Based on (Moussaid et al., 2009)
-	std::normal_distribution<float> distribution(1.29f, 0.19f);	// Generate random value of mean 1.29 and standard deviation 0.19
-	this->desired_speed = distribution(generator);
+	switch (move_model_type) {
+		case SOCIAL_FORCE_MODEL:
+			this->radius = 0.2f;
+			std::normal_distribution<float> distribution(1.29f, 0.19f); // (Moussaid et al., 2009)
+			this->desired_speed = distribution(generator);
+			break;
+	}
 
 	this->shape = nullptr;
 }
 
 Agent::~Agent() {
-	this->path.clear();				// Remove waypoints
+	this->path.clear();
 	this->crowd_idx--;
 	if (this->shape != nullptr) delete this->shape;
 }
@@ -34,10 +36,10 @@ void Agent::push_waypoint(float x, float y, float radius) {
 Vector Agent::immediate_goal() {
 	Vector curr_dist, next_dist;
 
-	curr_dist = this->path[0].position - this->position;			// Distance to current waypoint
+	curr_dist = this->path[0].position - this->position;
 
 	if (this->path.size() > 2) {
-		next_dist = this->path[1].position - this->position;		// Distance to next waypoint
+		next_dist = this->path[1].position - this->position;
 
 		// Set Next Waypoint as Current Waypoint if Next Waypoint is Nearer
 		if (next_dist.norm_squared() < curr_dist.norm_squared()) {
@@ -65,11 +67,11 @@ Vector Agent::ahead_vec() const {
 	return (this->velocity + this->position);
 }
 
-void Agent::move(std::vector<Agent *> agents, std::vector<Wall *> walls, float step_time) {
+void Agent::sfm_move(std::vector<Agent *> agents, std::vector<Wall *> walls, float step_time) {
 	Vector acceleration;
 
 	// Compute Social Force
-	acceleration = this->driving_force(immediate_goal()) + this->agent_interaction_force(agents) + this->wall_interaction_force(walls);
+	acceleration = this->sfm_driving_force(immediate_goal()) + this->sfm_agent_interaction_force(agents) + this->sfm_wall_interaction_force(walls);
 
 	// Compute New Velocity
 	this->velocity = this->velocity + acceleration * step_time;
@@ -84,7 +86,7 @@ void Agent::move(std::vector<Agent *> agents, std::vector<Wall *> walls, float s
 	this->position = this->position + this->velocity * step_time;
 }
 
-Vector Agent::driving_force(const Vector position_target) {
+Vector Agent::sfm_driving_force(const Vector position_target) {
 	const float T = 0.54f;	// Relaxation time based on (Moussaid et al., 2009)
 	Vector e_i, f_i;
 
@@ -100,7 +102,7 @@ Vector Agent::driving_force(const Vector position_target) {
 	return f_i;
 }
 
-Vector Agent::agent_interaction_force(std::vector<Agent *> agents) {
+Vector Agent::sfm_agent_interaction_force(std::vector<Agent *> agents) {
 	// Constant Values Based on (Moussaid et al., 2009)
 	const float lambda = 2.0;	// Weight reflecting relative importance of velocity vector against position vector
 	const float gamma = 0.35f;	// Speed interaction
@@ -169,7 +171,7 @@ Vector Agent::agent_interaction_force(std::vector<Agent *> agents) {
 	return f_ij;
 }
 
-Vector Agent::wall_interaction_force(std::vector<Wall *> walls) {
+Vector Agent::sfm_wall_interaction_force(std::vector<Wall *> walls) {
 	//const float repulsionRange = 0.3f;	// Repulsion range based on (Moussaid et al., 2009)
 	const int a = 3;
 	const float b = 0.1f;
