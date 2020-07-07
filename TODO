@@ -1,7 +1,6 @@
 --Bugs--
-TODO: agents not repositioning correctly on window resize
-TODO: agent graphics sometimes disappear, especially when there's a lot of them
 TODO: majority of time, no agents are showing
+        * has to do with size: when environment is large, always works
 TODO: sometimes, agents spawn in illegal areas
 
 --Optimization--
