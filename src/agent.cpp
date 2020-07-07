@@ -25,8 +25,15 @@ Agent::~Agent() {
 }
 
 void Agent::update_shape() {
-	if (this->shape != nullptr) delete this->shape;
-    this->shape = regular_ngon(this->position, this->radius, this->shape_sides);
+	if (this->shape == nullptr) {
+		this->shape = regular_ngon(this->position, this->radius, this->shape_sides);
+	} else {
+		for (size_t i = 0; i < this->shape_sides; i++) {
+			this->shape->vertices[i].x += this->position.x - this->prev_update_pos.x;
+			this->shape->vertices[i].y += this->position.y - this->prev_update_pos.y;
+		}
+	}
+	this->prev_update_pos = this->position;
 }
 
 void Agent::push_waypoint(float x, float y, float radius) {
@@ -60,18 +67,20 @@ Vector Agent::immediate_goal() {
 }
 
 float Agent::orientation() const {
-	return (atan2(this->velocity.y, this->velocity.x) * (180 / M_PI));
+	return atan2(this->velocity.y, this->velocity.x) * (180 / M_PI);
 }
 
 Vector Agent::ahead_vec() const {
-	return (this->velocity + this->position);
+	return this->velocity + this->position;
 }
 
 void Agent::sfm_move(std::vector<Agent *> agents, std::vector<Wall *> walls, float step_time) {
 	Vector acceleration;
 
 	// Compute Social Force
-	acceleration = this->sfm_driving_force(immediate_goal()) + this->sfm_agent_interaction_force(agents) + this->sfm_wall_interaction_force(walls);
+	acceleration = this->sfm_driving_force(immediate_goal()) +
+				   this->sfm_agent_interaction_force(agents) +
+				   this->sfm_wall_interaction_force(walls);
 
 	// Compute New Velocity
 	this->velocity = this->velocity + acceleration * step_time;

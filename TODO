@@ -5,18 +5,15 @@ TODO: agent graphics sometimes disappear, especially when there's a lot of them
 --Optimization--
 TODO: use unsigned char instead of unsigned int for openGL indexing
 TODO: const/const reference C++ optimizations
+TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
 
 --Code Improvement--
 TODO: refactor external SFM code
         * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
-TODO: better implementation of agent shape update
 TODO: don't use rescaling when only translating is necessary
-TODO: make visualizer more abstracted for future flexibility
-TODO: abstract SFM out of the Agent class
 
 --Features--
-TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
 TODO: make sure that SFM constants are at appropriate scale
 TODO: agent-agent and agent-wall collision
 

@@ -22,6 +22,7 @@ class Agent {
         static int crowd_idx;
         static const size_t shape_sides = 10;
 
+        Vector prev_update_pos;
         Polygon* shape;
 
         int id;
