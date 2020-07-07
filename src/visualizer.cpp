@@ -159,7 +159,6 @@ static int show_visualization() {
         set_color(shader, agent_color);
         for (size_t i = 0; i < move_model->crowd.size(); i++) {
             move_model->crowd[i]->update_shape();
-            agos[i]->obj = move_model->crowd[i]->shape;
             scale_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
         }

@@ -1,6 +1,8 @@
 --Bugs--
 TODO: agents not repositioning correctly on window resize
 TODO: agent graphics sometimes disappear, especially when there's a lot of them
+TODO: majority of time, no agents are showing
+TODO: sometimes, agents spawn in illegal areas
 
 --Optimization--
 TODO: use unsigned char instead of unsigned int for openGL indexing
@@ -16,6 +18,7 @@ TODO: don't use rescaling when only translating is necessary
 --Features--
 TODO: make sure that SFM constants are at appropriate scale
 TODO: agent-agent and agent-wall collision
+TODO: add a version of penta_in_hepta environment with some interior walls
 
 --Project--
 TODO: make Readme nicer
