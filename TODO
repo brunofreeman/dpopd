@@ -13,7 +13,6 @@ TODO: float vs. double (graphics should use float, but are doubles necessary for
 TODO: refactor external SFM code
         * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
-TODO: don't use rescaling when only translating is necessary
 
 --Features--
 TODO: make sure that SFM constants are at appropriate scale

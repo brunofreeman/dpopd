@@ -80,9 +80,9 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
 static void glfw_window_resize_callback(GLFWwindow* window, int new_screen_width, int new_screen_height) {
     screen_width = new_screen_width;
     screen_height = new_screen_height;
-    scale_environment_positions(ego, environment, screen_width, screen_height, padding);
+    refresh_environment_positions(ego, environment, screen_width, screen_height, padding);
     for (size_t i = 0; i < move_model->crowd.size(); i++) {
-        scale_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
+        refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
     }
 }
 
@@ -159,7 +159,7 @@ static int show_visualization() {
         set_color(shader, agent_color);
         for (size_t i = 0; i < move_model->crowd.size(); i++) {
             move_model->crowd[i]->update_shape();
-            scale_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
+            refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
         }
 

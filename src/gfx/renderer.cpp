@@ -35,7 +35,7 @@ void set_color(Shader& shader, const Color& color) {
     shader.set_uniform_4f("u_Color", color.r, color.g, color.b, color.a);
 }
 
-void scale_environment_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height, float padding) {
+void refresh_environment_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height, float padding) {
     double x_scale = (1 - 2 * padding) * screen_width / environment->width;
     double y_scale = (1 - 2 * padding) * screen_height / environment->height;
     double scale = x_scale < y_scale ? x_scale : y_scale;
@@ -59,7 +59,7 @@ void scale_environment_positions(GraphicsObject* go, Environment* environment, i
     }
 }
 
-void scale_polygon_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height, float padding) {
+void refresh_polygon_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height, float padding) {
     double x_scale = (1 - 2 * padding) * screen_width / environment->width;
     double y_scale = (1 - 2 * padding) * screen_height / environment->height;
     double scale = x_scale < y_scale ? x_scale : y_scale;
@@ -117,7 +117,7 @@ GraphicsObject* environment_graphics_object(Environment* environment, int screen
     IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
 
     GraphicsObject* ego = new GraphicsObject(environment, va, vb, vbl, ib, positions_heap, indices_heap, positions_s, indices_s);
-    scale_environment_positions(ego, environment, screen_width, screen_height, padding);
+    refresh_environment_positions(ego, environment, screen_width, screen_height, padding);
     return ego;
 }
 
@@ -152,6 +152,6 @@ GraphicsObject* agent_graphics_object(Agent* agent, Environment* environment, in
     IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
 
     GraphicsObject* ago = new GraphicsObject(agent->shape, va, vb, vbl, ib, positions_heap, indices_heap, positions_s, indices_s);
-    scale_polygon_positions(ago, environment, screen_width, screen_height, padding);
+    refresh_polygon_positions(ago, environment, screen_width, screen_height, padding);
     return ago;
 }
