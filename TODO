@@ -5,7 +5,6 @@ TODO: majority of time, no agents are showing
 TODO: sometimes, agents spawn in illegal areas
 
 --Optimization--
-TODO: use unsigned char instead of unsigned int for openGL indexing
 TODO: const/const reference C++ optimizations
 TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
 

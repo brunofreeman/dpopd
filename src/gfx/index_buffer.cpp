@@ -13,7 +13,7 @@ IndexBuffer::~IndexBuffer() {
 }
 
 void IndexBuffer::bind() const {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
 }
 
 void IndexBuffer::unbind() const {
