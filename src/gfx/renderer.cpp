@@ -44,16 +44,16 @@ void refresh_environment_positions(GraphicsObject* go, Environment* environment,
     size_t index = 0;
 
     Polygon* border = environment->border;
-    for (size_t i = 0; i < border->vertices_s; i++) {
+    for (size_t i = 0; i < border->vertices.size(); i++) {
         float x = border->vertices[i].x;
         float y = border->vertices[i].y;
         SET_X;
         SET_Y;
     }
 
-    for (size_t i = 0; i < environment->obstacles_s; i++) {
+    for (size_t i = 0; i < environment->obstacles.size(); i++) {
         Polygon* obstacle = environment->obstacles[i];
-        for (size_t j = 0; j < obstacle->vertices_s; j++) {
+        for (size_t j = 0; j < obstacle->vertices.size(); j++) {
             float x = obstacle->vertices[j].x;
             float y = obstacle->vertices[j].y;
             SET_X;
@@ -71,7 +71,7 @@ void refresh_polygon_positions(GraphicsObject* go, Environment* environment, int
     size_t index = 0;
 
     Polygon* polygon = (Polygon*) go->obj;
-    for (size_t i = 0; i < polygon->vertices_s; i++) {
+    for (size_t i = 0; i < polygon->vertices.size(); i++) {
         float x = polygon->vertices[i].x;
         float y = polygon->vertices[i].y;
         SET_X;
@@ -83,24 +83,24 @@ GraphicsObject*
 environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding) {
     std::vector<std::vector<Point>> environment_polygon;
     std::vector<Point> border_vertices;
-    std::vector<Point> obstacles_vertices[environment->obstacles_s];
+    std::vector<Point> obstacles_vertices[environment->obstacles.size()];
 
     size_t positions_s = 0;
 
 #define NEW_VERTEX(src, dest) dest.push_back((Point){(float)src->vertices[i].x, (float)src->vertices[i].y}); positions_s += 2;
 
-    for (size_t i = 0; i < environment->border->vertices_s; i++) {
+    for (size_t i = 0; i < environment->border->vertices.size(); i++) {
         NEW_VERTEX(environment->border, border_vertices);
     }
 
-    for (size_t j = 0; j < environment->obstacles_s; j++) {
-        for (size_t i = 0; i < environment->obstacles[j]->vertices_s; i++) {
+    for (size_t j = 0; j < environment->obstacles.size(); j++) {
+        for (size_t i = 0; i < environment->obstacles[j]->vertices.size(); i++) {
             NEW_VERTEX(environment->obstacles[j], obstacles_vertices[j])
         }
     }
 
     environment_polygon.push_back(border_vertices);
-    for (size_t i = 0; i < environment->obstacles_s; i++) {
+    for (size_t i = 0; i < environment->obstacles.size(); i++) {
         environment_polygon.push_back(obstacles_vertices[i]);
     }
 

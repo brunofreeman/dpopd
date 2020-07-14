@@ -1,12 +1,14 @@
 #include "environment.hpp"
 
-Environment::Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s) :
-        border(border), obstacles(obstacles), obstacles_s(obstacles_s) {
+#include <utility>
+
+Environment::Environment(Polygon* border, std::vector<Polygon*> obstacles) :
+        border(border), obstacles(std::move(obstacles)) {
 
     this->width = 0;
     this->height = 0;
 
-    for (size_t i = 0; i < border->vertices_s; i++) {
+    for (size_t i = 0; i < border->vertices.size(); i++) {
         if (border->vertices[i].x > width) {
             this->width = border->vertices[i].x;
         }
@@ -18,16 +20,15 @@ Environment::Environment(Polygon* border, Polygon** obstacles, const size_t obst
 
 Environment::~Environment() {
     delete this->border;
-    for (size_t i = 0; i < this->obstacles_s; i++) {
-        delete this->obstacles[i];
+    for (auto& obstacle : this->obstacles) {
+        delete obstacle;
     }
-    delete[] this->obstacles;
 }
 
 bool Environment::is_interior_point(const Vector& point, double radius) const {
     if (!this->border->is_interior_point(point, radius)) return false;
-    for (size_t i = 0; i < this->obstacles_s; i++) {
-        if (this->obstacles[i]->is_interior_point(point, radius)) return false;
+    for (auto obstacle : this->obstacles) {
+        if (obstacle->is_interior_point(point, radius)) return false;
     }
     return true;
 }
@@ -49,10 +50,10 @@ std::string Environment::to_string() const {
     env_str += this->border->to_string();
 
     env_str += "\no: {\n";
-    for (size_t i = 0; i < obstacles_s; i++) {
+    for (size_t i = 0; i < obstacles.size(); i++) {
         env_str += "     ";
         env_str += this->obstacles[i]->to_string();
-        if (i != this->obstacles_s - 1) {
+        if (i != this->obstacles.size() - 1) {
             env_str += ",";
         }
         env_str += "\n";

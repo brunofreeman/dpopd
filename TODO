@@ -1,6 +1,6 @@
 --Bugs--
 TODO: majority of time, no agents are showing
-        * has to do with size: when environment is large, always works
+        * has to do with size: when environment is large or agent count is low, works
 TODO: sometimes, agents spawn in illegal areas
 
 --Optimization--
@@ -15,6 +15,8 @@ TODO: refactor external SFM code
 TODO: comments/documentation!
 TODO: <XXXX.h> vs. <cXXXX>
 TODO: shader file in src/?
+TODO: to_strings factored out of classes
+TODO: lambdas instead of weird defines
 
 --Features--
 TODO: SFM shortest unobstructed path

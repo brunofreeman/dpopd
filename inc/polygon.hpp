@@ -3,16 +3,15 @@
 
 #include <cstdlib>
 #include <string>
+#include <utility>
+#include <vector>
 #include "vector.hpp"
 
 class Polygon {
 public:
-    Vector* vertices;
-    size_t vertices_s;
+    std::vector<Vector> vertices;
 
-    Polygon(Vector* vertices, const size_t vertices_s);
-
-    ~Polygon();
+    Polygon(std::vector<Vector> vertices) : vertices(std::move(vertices)) {}
 
     bool is_interior_point(const Vector& point, double radius) const;
 

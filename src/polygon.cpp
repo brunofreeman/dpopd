@@ -1,16 +1,9 @@
 #include <math.h>
 #include "polygon.hpp"
 
-Polygon::Polygon(Vector* vertices, const size_t vertices_s) :
-        vertices(vertices), vertices_s(vertices_s) {}
-
-Polygon::~Polygon() {
-    delete[] this->vertices;
-}
-
 bool Polygon::is_interior_point(const Vector& point, double radius) const {
     double max_x = 0;
-    for (size_t i = 0; i < this->vertices_s; i++) {
+    for (size_t i = 0; i < this->vertices.size(); i++) {
         if (this->vertices[i].x > max_x) max_x = this->vertices[i].x;
     }
 
@@ -19,7 +12,7 @@ bool Polygon::is_interior_point(const Vector& point, double radius) const {
     size_t curr_idx = 0;
 
     do {
-        size_t next_idx = (curr_idx + 1) % this->vertices_s;
+        size_t next_idx = (curr_idx + 1) % this->vertices.size();
         Segment seg = {this->vertices[curr_idx], this->vertices[next_idx]};
         if (distance(point, seg) < radius) return false;
         if (check_intersect(seg, pos_x_ray)) intersections++;
@@ -36,9 +29,9 @@ bool Polygon::is_interior_point(const Vector& point) const {
 std::string Polygon::to_string() const {
     std::string poly_str = "[";
 
-    for (size_t i = 0; i < this->vertices_s; i++) {
+    for (size_t i = 0; i < this->vertices.size(); i++) {
         poly_str += this->vertices[i].to_string();
-        if (i != this->vertices_s - 1) {
+        if (i != this->vertices.size() - 1) {
             poly_str += ", ";
         }
     }
@@ -49,12 +42,12 @@ std::string Polygon::to_string() const {
 }
 
 Polygon* regular_ngon(const Vector& center, double r, size_t n) {
-    Vector* vertices = new Vector[n];
+    std::vector<Vector> vertices(n);
     for (size_t i = 0; i < n; i++) {
         Vector vertex(0, r);
         vertex.rotate(i * (2 * M_PI) / n);
         vertex += center;
         vertices[i] = vertex;
     }
-    return new Polygon(vertices, n);
+    return new Polygon(vertices);
 }
