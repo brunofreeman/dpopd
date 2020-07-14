@@ -33,6 +33,12 @@ obj/*
 *.app
 bin/*
 
-# CMake
-CMakeLists.txt
+# CMake/Makefile
+bin/
+obj/
+out/
+CMakeFiles/
 cmake-build-debug/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
