@@ -14,6 +14,7 @@ TODO: refactor external SFM code
         * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
 TODO: <XXXX.h> vs. <cXXXX>
+TODO: shader file in src/?
 
 --Features--
 TODO: SFM shortest unobstructed path

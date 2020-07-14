@@ -15,12 +15,19 @@
 #include <bfreeman/dijkstra_polygon.hpp>
 
 static int show_visualization();
+
 static void glfw_set_version(int major, int minor);
+
 static GLFWwindow* glfw_window_init(const std::string& window_name, int width, int height);
+
 static void glfw_window_resize_callback(GLFWwindow* window, int width, int height);
+
 static void init_random();
+
 static void create_walls();
+
 static void create_agents();
+
 static void add_polygon_walls(Polygon* polygon);
 
 Environment* environment;
@@ -94,11 +101,11 @@ static void init_random() {
 
 static void add_polygon_walls(Polygon* polygon) {
     size_t curr_idx = 0;
-	do {
-		size_t next_idx = (curr_idx + 1) % polygon->vertices_s;
+    do {
+        size_t next_idx = (curr_idx + 1) % polygon->vertices_s;
         move_model->add_wall(new Wall(polygon->vertices[curr_idx], polygon->vertices[next_idx]));
-		curr_idx = next_idx;
-	} while (curr_idx != 0);
+        curr_idx = next_idx;
+    } while (curr_idx != 0);
 }
 
 static void create_walls() {
@@ -113,7 +120,7 @@ static void create_agents() {
     for (size_t i = 0; i < num_agents; i++) {
         agent = new Agent(move_model_type);
         agent->position = environment->random_interior_point(agent->radius);
-        agent->path.push_back((Waypoint){environment->random_interior_point(agent->radius), 3.0f});
+        agent->path.push_back((Waypoint) {environment->random_interior_point(agent->radius), 3.0f});
         agent->update_shape();
         move_model->add_agent(agent);
     }
@@ -134,7 +141,7 @@ static int show_visualization() {
     create_walls();
     create_agents();
 
-    agos = new GraphicsObject*[move_model->crowd.size()];
+    agos = new GraphicsObject* [move_model->crowd.size()];
     for (size_t i = 0; i < move_model->crowd.size(); i++) {
         agos[i] = agent_graphics_object(move_model->crowd[i], environment, screen_width, screen_height, padding);
     }
@@ -145,7 +152,7 @@ static int show_visualization() {
         auto curr_time = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = curr_time - prev_time;
         prev_time = curr_time;
-        
+
         switch (move_model_type) {
             case SOCIAL_FORCE_MODEL:
                 move_model->sfm_move_crowd(elapsed_seconds.count());

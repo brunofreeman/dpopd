@@ -27,7 +27,7 @@ Environment* json_environment(std::string filename) {
     Polygon* border = json_polygon(json_env[JSON_ID_BORDER]);
 
     size_t obstacles_s = json_env[JSON_ID_OBSTACLES].size();
-    Polygon** obstacles = new Polygon*[obstacles_s];
+    Polygon** obstacles = new Polygon* [obstacles_s];
     for (size_t i = 0; i < obstacles_s; i++) {
         Polygon* obstacle = json_polygon(json_env[JSON_ID_OBSTACLES][i]);
         obstacles[i] = obstacle;
@@ -44,8 +44,8 @@ Environment* json_environment(std::string filename) {
     }
 
     double scale = json_env[JSON_ID_SCALE];
-    
-    #define NORM_AND_SCALE(src) src.x -= min_x; src.y -= min_y; src.x *= scale; src.y *= scale;
+
+#define NORM_AND_SCALE(src) src.x -= min_x; src.y -= min_y; src.x *= scale; src.y *= scale;
 
     for (size_t i = 0; i < border->vertices_s; i++) {
         NORM_AND_SCALE(border->vertices[i]);

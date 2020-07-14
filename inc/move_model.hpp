@@ -6,20 +6,23 @@
 #include "wall.hpp"
 
 class MoveModel {
-    public:
-        std::vector<Agent*> crowd;
-		std::vector<Wall*> walls;
+public:
+    std::vector<Agent*> crowd;
+    std::vector<Wall*> walls;
 
-		~MoveModel();
+    ~MoveModel();
 
-		void add_agent(Agent* agent);
-		void add_wall(Wall* wall);
+    void add_agent(Agent* agent);
 
-		void delete_agent();
-		void delete_crowd();
-		void delete_walls();
-        
-		void sfm_move_crowd(float step_time);
+    void add_wall(Wall* wall);
+
+    void delete_agent();
+
+    void delete_crowd();
+
+    void delete_walls();
+
+    void sfm_move_crowd(float step_time);
 };
 
 #endif // #ifndef __MOVE_MODEL_HPP__

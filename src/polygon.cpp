@@ -2,7 +2,7 @@
 #include "polygon.hpp"
 
 Polygon::Polygon(Vector* vertices, const size_t vertices_s) :
-    vertices(vertices), vertices_s(vertices_s) {}
+        vertices(vertices), vertices_s(vertices_s) {}
 
 Polygon::~Polygon() {
     delete[] this->vertices;
@@ -14,19 +14,19 @@ bool Polygon::is_interior_point(const Vector& point, double radius) const {
         if (this->vertices[i].x > max_x) max_x = this->vertices[i].x;
     }
 
-	Segment pos_x_ray = {point, Vector(max_x + 1, point.y)};
-	size_t intersections = 0;
+    Segment pos_x_ray = {point, Vector(max_x + 1, point.y)};
+    size_t intersections = 0;
     size_t curr_idx = 0;
 
-	do {
-		size_t next_idx = (curr_idx + 1) % this->vertices_s;
+    do {
+        size_t next_idx = (curr_idx + 1) % this->vertices_s;
         Segment seg = {this->vertices[curr_idx], this->vertices[next_idx]};
         if (distance(point, seg) < radius) return false;
-		if (check_intersect(seg, pos_x_ray)) intersections++;
-		curr_idx = next_idx;
-	} while (curr_idx != 0);
+        if (check_intersect(seg, pos_x_ray)) intersections++;
+        curr_idx = next_idx;
+    } while (curr_idx != 0);
 
-	return intersections % 2 == 1;
+    return intersections % 2 == 1;
 }
 
 bool Polygon::is_interior_point(const Vector& point) const {
@@ -36,7 +36,7 @@ bool Polygon::is_interior_point(const Vector& point) const {
 std::string Polygon::to_string() const {
     std::string poly_str = "[";
 
-    for (size_t i = 0; i < this->vertices_s; i++){
+    for (size_t i = 0; i < this->vertices_s; i++) {
         poly_str += this->vertices[i].to_string();
         if (i != this->vertices_s - 1) {
             poly_str += ", ";
@@ -44,12 +44,12 @@ std::string Polygon::to_string() const {
     }
 
     poly_str += "]";
-    
+
     return poly_str;
 }
 
 Polygon* regular_ngon(const Vector& center, double r, size_t n) {
-	Vector* vertices = new Vector[n];
+    Vector* vertices = new Vector[n];
     for (size_t i = 0; i < n; i++) {
         Vector vertex(0, r);
         vertex.rotate(i * (2 * M_PI) / n);

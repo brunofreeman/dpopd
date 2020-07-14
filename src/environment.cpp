@@ -1,7 +1,7 @@
 #include "environment.hpp"
 
 Environment::Environment(Polygon* border, Polygon** obstacles, const size_t obstacles_s) :
-    border(border), obstacles(obstacles), obstacles_s(obstacles_s) {
+        border(border), obstacles(obstacles), obstacles_s(obstacles_s) {
 
     this->width = 0;
     this->height = 0;
@@ -25,7 +25,7 @@ Environment::~Environment() {
 }
 
 bool Environment::is_interior_point(const Vector& point, double radius) const {
-	if (!this->border->is_interior_point(point, radius)) return false;
+    if (!this->border->is_interior_point(point, radius)) return false;
     for (size_t i = 0; i < this->obstacles_s; i++) {
         if (this->obstacles[i]->is_interior_point(point, radius)) return false;
     }

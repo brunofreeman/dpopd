@@ -7,7 +7,7 @@
 
 std::string Vector::to_string() const {
     return "(" + std::to_string(this->x) + ", "
-               + std::to_string(this->y) + ")";
+           + std::to_string(this->y) + ")";
 }
 
 /* Vector Vector::copy() const {
@@ -81,27 +81,29 @@ double angle(const Vector& vec1, const Vector& vec2) {
 }
 
 bool on_segment(const Vector& point, const Segment& seg) {
-	return (point.x <= max(seg.p1.x, seg.p2.x) && point.x >= min(seg.p1.x, seg.p2.x) &&
-            point.y <= max(seg.p1.y, seg.p2.y) && point.y >= min(seg.p1.y, seg.p2.y));
+    return (point.x <= max(seg.p1.x, seg.p2.x) && point.x >= min(seg.p1.x, seg.p2.x) &&
+                                                                                     point.y <= max(seg.p1.y, seg.p2.y)
+                                                                                     && point.y >= min(seg.p1.y,
+                                                                                                       seg.p2.y));
 }
 
 Orientation orientation(const Vector& p, const Vector& q, const Vector& r) {
-	double value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-	if (value == 0) return COLINEAR;
-	return value > 0 ? CLOCKWISE : COUNTERCLOCKWISE;
+    double value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    if (value == 0) return COLINEAR;
+    return value > 0 ? CLOCKWISE : COUNTERCLOCKWISE;
 }
 
-bool check_intersect(const Segment& seg1, const Segment& seg2)  {
-	Orientation o1 = orientation(seg1.p1, seg1.p2, seg2.p1);
-	Orientation o2 = orientation(seg1.p1, seg1.p2, seg2.p2);
-	Orientation o3 = orientation(seg2.p1, seg2.p2, seg1.p1);
-	Orientation o4 = orientation(seg2.p1, seg2.p2, seg1.p2);
+bool check_intersect(const Segment& seg1, const Segment& seg2) {
+    Orientation o1 = orientation(seg1.p1, seg1.p2, seg2.p1);
+    Orientation o2 = orientation(seg1.p1, seg1.p2, seg2.p2);
+    Orientation o3 = orientation(seg2.p1, seg2.p2, seg1.p1);
+    Orientation o4 = orientation(seg2.p1, seg2.p2, seg1.p2);
 
-	/* if (o1 != o2 && o3 != o4) return true;
-	if (o1 == COLINEAR && on_segment(seg2.p1, seg1)) return true;
-	if (o2 == COLINEAR && on_segment(seg2.p2, seg1)) return true;
-	if (o3 == COLINEAR && on_segment(seg1.p1, seg2)) return true;
-	if (o4 == COLINEAR && on_segment(seg1.p2, seg2)) return true;
+    /* if (o1 != o2 && o3 != o4) return true;
+    if (o1 == COLINEAR && on_segment(seg2.p1, seg1)) return true;
+    if (o2 == COLINEAR && on_segment(seg2.p2, seg1)) return true;
+    if (o3 == COLINEAR && on_segment(seg1.p1, seg2)) return true;
+    if (o4 == COLINEAR && on_segment(seg1.p2, seg2)) return true;
     return false; */
 
     return o1 != o2 && o3 != o4;
@@ -109,17 +111,17 @@ bool check_intersect(const Segment& seg1, const Segment& seg2)  {
 
 double length(const Segment& seg) {
     return sqrt(
-        square(seg.p2.x - seg.p1.x) +
-        square(seg.p2.y - seg.p1.y)
+            square(seg.p2.x - seg.p1.x) +
+            square(seg.p2.y - seg.p1.y)
     );
 }
 
 double distance(const Vector& point, const Segment& seg) {
     double distance = abs(
-        (seg.p2.y - seg.p1.y) * point.x -
-        (seg.p2.x - seg.p1.x) * point.y +
-        seg.p2.x * seg.p1.y -
-        seg.p2.y * seg.p1.x
+            (seg.p2.y - seg.p1.y) * point.x -
+            (seg.p2.x - seg.p1.x) * point.y +
+            seg.p2.x * seg.p1.y -
+            seg.p2.y * seg.p1.x
     );
     distance /= length(seg);
     return distance;
