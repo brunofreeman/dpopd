@@ -6,7 +6,6 @@ TODO: sometimes, agents spawn in illegal areas
 --Optimization--
 TODO: const/const reference C++ optimizations
 TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
-TODO: use std::vector instead of C arrays
 TODO: fix external SFM impl to not use std::vector of pointers
 
 --Code Improvement--
@@ -16,10 +15,8 @@ TODO: comments/documentation!
 TODO: <XXXX.h> vs. <cXXXX>
 TODO: shader file in src/?
 TODO: to_strings factored out of classes
-TODO: lambdas instead of weird defines
 
 --Features--
-TODO: SFM shortest unobstructed path
 TODO: make sure that SFM constants are at appropriate scale
 TODO: agent-agent and agent-wall collision
 TODO: endpoint edge case for intersecting segments, double equality
@@ -27,8 +24,5 @@ TODO: endpoint edge case for intersecting segments, double equality
 --Project--
 TODO: make Readme nicer
 TODO: add licenses for dependencies
-TODO: integrate CMake
-TODO: add reference to this project in dijkstra_polygon when made public
-        * include as installation example
 
 --Other--

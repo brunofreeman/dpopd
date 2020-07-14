@@ -3,10 +3,6 @@
 #include <array>
 #include <mapbox/earcut.hpp>
 #include "renderer.hpp"
-#include "graphics_util.hpp"
-
-#define SET_X go->positions[index++] = scale * (2 * x - environment->width) / screen_width
-#define SET_Y go->positions[index++] = scale * (2 * y - environment->height) / screen_height
 
 using Coord = float;
 using N = unsigned int;
@@ -35,8 +31,12 @@ void set_color(Shader& shader, const Color& color) {
     shader.set_uniform_4f("u_Color", color.r, color.g, color.b, color.a);
 }
 
-void refresh_environment_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height,
-                                   float padding) {
+float window_scale(const double xy, const double scale, const double environment_width_height, const int screen_width_height) {
+    return scale * (2 * xy - environment_width_height) / screen_width_height;
+}
+
+void refresh_environment_positions(GraphicsObject* go, Environment* environment, const int screen_width, const int screen_height,
+                                   const float padding) {
     double x_scale = (1 - 2 * padding) * screen_width / environment->width;
     double y_scale = (1 - 2 * padding) * screen_height / environment->height;
     double scale = x_scale < y_scale ? x_scale : y_scale;
@@ -44,58 +44,60 @@ void refresh_environment_positions(GraphicsObject* go, Environment* environment,
     size_t index = 0;
 
     Polygon* border = environment->border;
-    for (size_t i = 0; i < border->vertices.size(); i++) {
-        float x = border->vertices[i].x;
-        float y = border->vertices[i].y;
-        SET_X;
-        SET_Y;
+    for (auto& vertex : border->vertices) {
+        float x = vertex.x;
+        float y = vertex.y;
+        go->positions[index++] = window_scale(x, scale, environment->width, screen_width);
+        go->positions[index++] = window_scale(y, scale, environment->height, screen_height);
     }
 
-    for (size_t i = 0; i < environment->obstacles.size(); i++) {
-        Polygon* obstacle = environment->obstacles[i];
-        for (size_t j = 0; j < obstacle->vertices.size(); j++) {
-            float x = obstacle->vertices[j].x;
-            float y = obstacle->vertices[j].y;
-            SET_X;
-            SET_Y;
+    for (auto& obstacle : environment->obstacles) {
+        for (auto& vertex : obstacle->vertices) {
+            float x = vertex.x;
+            float y = vertex.y;
+            go->positions[index++] = window_scale(x, scale, environment->width, screen_width);
+            go->positions[index++] = window_scale(y, scale, environment->height, screen_height);
         }
     }
 }
 
-void refresh_polygon_positions(GraphicsObject* go, Environment* environment, int screen_width, int screen_height,
-                               float padding) {
+void refresh_polygon_positions(GraphicsObject* go, Environment* environment, const int screen_width, const int screen_height,
+                               const float padding) {
     double x_scale = (1 - 2 * padding) * screen_width / environment->width;
     double y_scale = (1 - 2 * padding) * screen_height / environment->height;
     double scale = x_scale < y_scale ? x_scale : y_scale;
 
     size_t index = 0;
 
-    Polygon* polygon = (Polygon*) go->obj;
-    for (size_t i = 0; i < polygon->vertices.size(); i++) {
-        float x = polygon->vertices[i].x;
-        float y = polygon->vertices[i].y;
-        SET_X;
-        SET_Y;
+    auto* polygon = (Polygon*) go->obj;
+    for (auto & vertex : polygon->vertices) {
+        float x = vertex.x;
+        float y = vertex.y;
+        go->positions[index++] = window_scale(x, scale, environment->width, screen_width);
+        go->positions[index++] = window_scale(y, scale, environment->height, screen_height);
     }
 }
 
 GraphicsObject*
-environment_graphics_object(Environment* environment, int screen_width, int screen_height, float padding) {
+environment_graphics_object(Environment* environment, const int screen_width, const int screen_height, const float padding) {
     std::vector<std::vector<Point>> environment_polygon;
     std::vector<Point> border_vertices;
     std::vector<Point> obstacles_vertices[environment->obstacles.size()];
 
     size_t positions_s = 0;
 
-#define NEW_VERTEX(src, dest) dest.push_back((Point){(float)src->vertices[i].x, (float)src->vertices[i].y}); positions_s += 2;
+    auto new_vertex = [](const Polygon* src, std::vector<Point>& dest, const size_t i, size_t& positions_s) {
+        dest.push_back((Point){(float)src->vertices[i].x, (float)src->vertices[i].y});
+        positions_s += 2;
+    };
 
     for (size_t i = 0; i < environment->border->vertices.size(); i++) {
-        NEW_VERTEX(environment->border, border_vertices);
+        new_vertex(environment->border, border_vertices, i, positions_s);
     }
 
-    for (size_t j = 0; j < environment->obstacles.size(); j++) {
-        for (size_t i = 0; i < environment->obstacles[j]->vertices.size(); i++) {
-            NEW_VERTEX(environment->obstacles[j], obstacles_vertices[j])
+    for (size_t i = 0; i < environment->obstacles.size(); i++) {
+        for (size_t j = 0; j < environment->obstacles[i]->vertices.size(); j++) {
+            new_vertex(environment->obstacles[i], obstacles_vertices[i], j, positions_s);
         }
     }
 
@@ -108,32 +110,32 @@ environment_graphics_object(Environment* environment, int screen_width, int scre
 
     size_t indices_s = indices.size();
 
-    float* positions_heap = new float[positions_s];
-    unsigned int* indices_heap = new unsigned int[indices_s];
+    auto* positions_heap = new float[positions_s];
+    auto* indices_heap = new unsigned int[indices_s];
 
     std::copy(indices.begin(), indices.end(), indices_heap);
 
-    VertexArray* va = new VertexArray();
-    VertexBuffer* vb = new VertexBuffer(positions_heap, positions_s * sizeof(float));
+    auto* va = new VertexArray();
+    auto* vb = new VertexBuffer(positions_heap, positions_s * sizeof(float));
 
-    VertexBufferLayout* vbl = new VertexBufferLayout();
+    auto* vbl = new VertexBufferLayout();
     vbl->push_f(2); // two floats per vertex: (x, y)
     va->add_buffer(vb, vbl);
 
-    IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
+    auto* ib = new IndexBuffer(indices_heap, indices_s);
 
-    GraphicsObject* ego = new GraphicsObject(environment, va, vb, vbl, ib, positions_heap, indices_heap, positions_s,
+    auto* ego = new GraphicsObject(environment, va, vb, vbl, ib, positions_heap, indices_heap, positions_s,
                                              indices_s);
     refresh_environment_positions(ego, environment, screen_width, screen_height, padding);
     return ego;
 }
 
 GraphicsObject*
-agent_graphics_object(Agent* agent, Environment* environment, int screen_width, int screen_height, float padding) {
+agent_graphics_object(Agent* agent, Environment* environment, const int screen_width, const int screen_height, const float padding) {
     std::vector<std::vector<Point>> agent_polygon;
     std::vector<Point> agent_vertices;
 
-    for (size_t i = 0; i < agent->shape_sides; i++) {
+    for (size_t i = 0; i < Agent::shape_sides; i++) {
         Vector vertex = agent->shape->vertices[i];
         agent_vertices.push_back((Point) {(float) vertex.x, (float) vertex.y});
     }
@@ -142,24 +144,24 @@ agent_graphics_object(Agent* agent, Environment* environment, int screen_width, 
 
     std::vector<N> indices = mapbox::earcut<N>(agent_polygon);
 
-    size_t positions_s = 2 * agent->shape_sides;
+    size_t positions_s = 2 * Agent::shape_sides;
     size_t indices_s = indices.size();
 
-    float* positions_heap = new float[positions_s];
-    unsigned int* indices_heap = new unsigned int[indices_s];
+    auto* positions_heap = new float[positions_s];
+    auto* indices_heap = new unsigned int[indices_s];
 
     std::copy(indices.begin(), indices.end(), indices_heap);
 
-    VertexArray* va = new VertexArray();
-    VertexBuffer* vb = new VertexBuffer(positions_heap, positions_s * sizeof(float));
+    auto* va = new VertexArray();
+    auto* vb = new VertexBuffer(positions_heap, positions_s * sizeof(float));
 
-    VertexBufferLayout* vbl = new VertexBufferLayout();
+    auto* vbl = new VertexBufferLayout();
     vbl->push_f(2); // two floats per vertex: (x, y)
     va->add_buffer(vb, vbl);
 
-    IndexBuffer* ib = new IndexBuffer(indices_heap, indices_s);
+    auto* ib = new IndexBuffer(indices_heap, indices_s);
 
-    GraphicsObject* ago = new GraphicsObject(agent->shape, va, vb, vbl, ib, positions_heap, indices_heap, positions_s,
+    auto* ago = new GraphicsObject(agent->shape, va, vb, vbl, ib, positions_heap, indices_heap, positions_s,
                                              indices_s);
     refresh_polygon_positions(ago, environment, screen_width, screen_height, padding);
     return ago;
