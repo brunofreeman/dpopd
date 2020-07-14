@@ -12,6 +12,7 @@
 #include "vertex_array.hpp"
 #include "shader.hpp"
 #include "move_model.hpp"
+#include <bfreeman/dijkstra_polygon.hpp>
 
 static int show_visualization();
 static void glfw_set_version(int major, int minor);
@@ -32,7 +33,7 @@ Color agent_color(ORANGE_RGB);
 
 MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
-size_t num_agents = 10;
+size_t num_agents = 2;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -40,7 +41,7 @@ char glfw_version_minor = 1;
 short screen_width = 640;
 short screen_height = 480;
 
-char environment_name[] = "irregular_1";
+char environment_name[] = "penta_in_hepta_walls_1";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 

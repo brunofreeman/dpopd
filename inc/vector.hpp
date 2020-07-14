@@ -15,8 +15,8 @@ class Vector {
         double y;
         Vector() : x(0), y(0) {}
         Vector(double x, double y) : x(x), y(y) {}
-        std::string to_string();
-        Vector copy() const;
+        std::string to_string() const;
+        // Vector copy() const;
         void set(double x, double y);
         double norm_squared() const;
         double norm() const;

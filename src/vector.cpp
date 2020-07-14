@@ -5,14 +5,14 @@
 #define max(a, b) a > b ? a : b
 #define square(a) a*a
 
-std::string Vector::to_string() {
+std::string Vector::to_string() const {
     return "(" + std::to_string(this->x) + ", "
                + std::to_string(this->y) + ")";
 }
 
-Vector Vector::copy() const {
+/* Vector Vector::copy() const {
     return Vector(this->x, this->y);
-}
+} */
 
 void Vector::set(double x, double y) {
     this->x = x;
@@ -81,12 +81,12 @@ double angle(const Vector& vec1, const Vector& vec2) {
 }
 
 bool on_segment(const Vector& point, const Segment& seg) {
-	return (point.x <= max(seg.p1.x, seg.p2.x) && point.x >= min(seg.p1.x, seg.p2.x)
-            && point.y <= max(seg.p1.y, seg.p2.y) && point.y >= min(seg.p1.y, seg.p2.y));
+	return (point.x <= max(seg.p1.x, seg.p2.x) && point.x >= min(seg.p1.x, seg.p2.x) &&
+            point.y <= max(seg.p1.y, seg.p2.y) && point.y >= min(seg.p1.y, seg.p2.y));
 }
 
 Orientation orientation(const Vector& p, const Vector& q, const Vector& r) {
-	int value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+	double value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 	if (value == 0) return COLINEAR;
 	return value > 0 ? CLOCKWISE : COUNTERCLOCKWISE;
 }

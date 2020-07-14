@@ -11,6 +11,8 @@ http://glew.sourceforge.net/ (accessing OpenGL graphics functions from GPU)
 
 https://github.com/mapbox/earcut.hpp (polygon triangulation)
 
+https://github.com/brunofreeman/dijkstra_polygon (shortest polygon path generation)
+
 Incorporations:
 
 https://github.com/fawwazbmn/SocialForceModel (basis for SFM implementation)
