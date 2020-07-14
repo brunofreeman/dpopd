@@ -26,9 +26,9 @@ Agent::~Agent() {
 
 void Agent::update_shape() {
     if (this->shape == nullptr) {
-        this->shape = regular_ngon(this->position, this->radius, this->shape_sides);
+        this->shape = regular_ngon(this->position, this->radius, Agent::shape_sides);
     } else {
-        for (size_t i = 0; i < this->shape_sides; i++) {
+        for (size_t i = 0; i < Agent::shape_sides; i++) {
             this->shape->vertices[i].x += this->position.x - this->prev_update_pos.x;
             this->shape->vertices[i].y += this->position.y - this->prev_update_pos.y;
         }
