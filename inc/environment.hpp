@@ -2,7 +2,6 @@
 #define __ENVIRONMENT_HPP__
 
 #include <cstdlib>
-#include <string>
 #include <vector>
 #include "polygon.hpp"
 
@@ -23,8 +22,6 @@ public:
     Vector random_interior_point(double radius) const;
 
     Vector random_interior_point() const;
-
-    std::string to_string() const;
 };
 
 #endif // #ifndef __ENVIRONMENT_HPP__

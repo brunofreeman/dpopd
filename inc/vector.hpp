@@ -1,8 +1,6 @@
 #ifndef __VECTOR_HPP__
 #define __VECTOR_HPP__
 
-#include <string>
-
 enum Orientation {
     COUNTERCLOCKWISE = -1,
     COLINEAR = 0,
@@ -18,9 +16,6 @@ public:
 
     Vector(double x, double y) : x(x), y(y) {}
 
-    std::string to_string() const;
-
-    // Vector copy() const;
     void set(double x, double y);
 
     double norm_squared() const;

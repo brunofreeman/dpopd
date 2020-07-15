@@ -1,25 +1,17 @@
 --Bugs--
-TODO: majority of time, no agents are showing
-        * has to do with size: when environment is large or agent count is low, works
-TODO: sometimes, agents spawn in illegal areas
+TODO: once and a while an agent will get out of bounds
+        * investigate the narrow protrusion on irregular_1 and _2
+        * looks like some pedestrians try to push out of the tip of
+        * the protrusion -- bad path from dijkstra_polygon?
 
 --Optimization--
-TODO: const/const reference C++ optimizations
-TODO: float vs. double (graphics should use float, but are doubles necessary for data?)
-TODO: fix external SFM impl to not use std::vector of pointers
 
 --Code Improvement--
 TODO: refactor external SFM code
-        * did they use degrees instead of radians? see orientation()
 TODO: comments/documentation!
-TODO: <XXXX.h> vs. <cXXXX>
-TODO: shader file in src/?
-TODO: to_strings factored out of classes
 
 --Features--
 TODO: make sure that SFM constants are at appropriate scale
-TODO: agent-agent and agent-wall collision
-TODO: endpoint edge case for intersecting segments, double equality
 
 --Project--
 TODO: make Readme nicer

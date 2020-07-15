@@ -5,7 +5,6 @@
 #include <vector>
 #include "wall.hpp"
 #include "vector.hpp"
-#include "gfx/color.hpp"
 #include "polygon.hpp"
 
 enum MoveModelType {
@@ -14,44 +13,39 @@ enum MoveModelType {
 
 struct Waypoint {
     Vector position;
-    float radius;
+    float radius {0.0f};
 };
 
 class Agent {
 public:
-    static int crowd_idx;
+    static size_t crowd_size;
     static const size_t shape_sides = 10;
 
     Vector prev_update_pos;
     Polygon* shape;
 
-    int id;
+    size_t id;
     float radius;
     float desired_speed;
-    Color color;
 
     Vector position;
     std::deque<Waypoint> path;
     Vector velocity;
 
-    Agent(const MoveModelType& move_model_type);
+    explicit Agent(const MoveModelType& move_model_type);
 
     ~Agent();
 
     void update_shape();
 
-    void push_waypoint(float x, float y, float radius);
+    void push_waypoint(float x, float y, float waypoint_radius);
 
     Vector immediate_goal();
 
-    float orientation() const;
-
-    Vector ahead_vec() const;
-
-    Vector sfm_driving_force(const Vector position_target);            // Computes f_i
-    Vector sfm_agent_interaction_force(std::vector<Agent*> agents);    // Computes f_ij
-    Vector sfm_wall_interaction_force(std::vector<Wall*> walls);    // Computes f_iw
-    void sfm_move(std::vector<Agent*> agents, std::vector<Wall*> walls, float step_time);
+    [[nodiscard]] Vector sfm_driving_force(const Vector& position_target) const;            // Computes f_i
+    [[nodiscard]] Vector sfm_agent_interaction_force(const std::vector<Agent*>& agents) const;    // Computes f_ij
+    [[nodiscard]] Vector sfm_wall_interaction_force(const std::vector<Wall*>& walls) const;    // Computes f_iw
+    void sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time);
 };
 
 #endif // #ifndef __AGENT_HPP__

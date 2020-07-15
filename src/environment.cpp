@@ -1,6 +1,5 @@
-#include "environment.hpp"
-
 #include <utility>
+#include "environment.hpp"
 
 Environment::Environment(Polygon* border, std::vector<Polygon*> obstacles) :
         border(border), obstacles(std::move(obstacles)) {
@@ -43,22 +42,4 @@ Vector Environment::random_interior_point(double radius) const {
 
 Vector Environment::random_interior_point() const {
     return this->random_interior_point(0.0f);
-}
-
-std::string Environment::to_string() const {
-    std::string env_str = "b: ";
-    env_str += this->border->to_string();
-
-    env_str += "\no: {\n";
-    for (size_t i = 0; i < obstacles.size(); i++) {
-        env_str += "     ";
-        env_str += this->obstacles[i]->to_string();
-        if (i != this->obstacles.size() - 1) {
-            env_str += ",";
-        }
-        env_str += "\n";
-    }
-    env_str += "}";
-
-    return env_str;
 }

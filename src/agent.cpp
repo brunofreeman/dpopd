@@ -1,17 +1,17 @@
-#include <random>
+#include <cmath>
 #include "agent.hpp"
+#include "random_wrapper.hpp"
 
-int Agent::crowd_idx = -1;
-std::default_random_engine generator;
+size_t Agent::crowd_size = 0;
 
 Agent::Agent(const MoveModelType& move_model_type) {
-    this->id = ++Agent::crowd_idx;
+    this->id = Agent::crowd_size++;
 
     switch (move_model_type) {
         case SOCIAL_FORCE_MODEL:
             this->radius = 0.2f;
-            std::normal_distribution<float> distribution(1.29f, 0.19f); // (Moussaid et al., 2009)
-            this->desired_speed = distribution(generator);
+            // (Moussaid et al., 2009)
+            this->desired_speed = from_normal_distribution(1.29, 0.19);
             break;
     }
 
@@ -20,7 +20,7 @@ Agent::Agent(const MoveModelType& move_model_type) {
 
 Agent::~Agent() {
     this->path.clear();
-    Agent::crowd_idx--;
+    Agent::crowd_size--;
     delete this->shape;
 }
 
@@ -36,66 +36,45 @@ void Agent::update_shape() {
     this->prev_update_pos = this->position;
 }
 
-void Agent::push_waypoint(float x, float y, float radius) {
-    this->path.push_back((Waypoint) {Vector(x, y), radius});
+void Agent::push_waypoint(float x, float y, float waypoint_radius) {
+    this->path.push_back((Waypoint) {Vector(x, y), waypoint_radius});
 }
 
 Vector Agent::immediate_goal() {
-    Vector curr_dist, next_dist;
+    if (this->path.empty()) return this->position;
 
-    curr_dist = this->path[0].position - this->position;
+    Vector distance = this->path.front().position - this->position;
 
-    if (this->path.size() > 2) {
-        next_dist = this->path[1].position - this->position;
-
-        // Set Next Waypoint as Current Waypoint if Next Waypoint is Nearer
-        if (next_dist.norm_squared() < curr_dist.norm_squared()) {
-            this->path.push_back(this->path.front());
-            this->path.pop_front();
-
-            curr_dist = next_dist;
-        }
-    }
-
-    // Move Front Point to Back if Within Radius
-    if (curr_dist.norm_squared() < (this->path.front().radius * this->path.front().radius)) {
-        this->path.push_back(this->path.front());
+    if (distance.norm() < this->path.front().radius) {
         this->path.pop_front();
+        if (this->path.empty()) return this->position;
     }
 
     return this->path.front().position;
 }
 
-float Agent::orientation() const {
-    return atan2(this->velocity.y, this->velocity.x) * (180 / M_PI);
-}
+void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
+    Vector goal = immediate_goal();
+    Vector vec1 = this->sfm_driving_force(goal);
+    Vector vec2 = this->sfm_agent_interaction_force(agents);
+    Vector vec3 = this->sfm_wall_interaction_force(walls);
+    Vector acceleration = vec1 + vec2 + vec3;
+    /*Vector acceleration = this->sfm_driving_force(immediate_goal()) +
+                          this->sfm_agent_interaction_force(agents) +
+                          this->sfm_wall_interaction_force(walls);*/
 
-Vector Agent::ahead_vec() const {
-    return this->velocity + this->position;
-}
-
-void Agent::sfm_move(std::vector<Agent*> agents, std::vector<Wall*> walls, float step_time) {
-    Vector acceleration;
-
-    // Compute Social Force
-    acceleration = this->sfm_driving_force(immediate_goal()) +
-                   this->sfm_agent_interaction_force(agents) +
-                   this->sfm_wall_interaction_force(walls);
-
-    // Compute New Velocity
-    this->velocity = this->velocity + acceleration * step_time;
+    this->velocity += acceleration * step_time;
 
     // Truncate Velocity if Exceed Maximum Speed (Magnitude)
-    if (this->velocity.norm_squared() > (this->desired_speed * this->desired_speed)) {
+    if (this->velocity.norm() > this->desired_speed) {
         this->velocity.normalize();
         this->velocity *= this->desired_speed;
     }
 
-    // Compute New Position
-    this->position = this->position + this->velocity * step_time;
+    this->position += this->velocity * step_time;
 }
 
-Vector Agent::sfm_driving_force(const Vector position_target) {
+Vector Agent::sfm_driving_force(const Vector& position_target) const {
     const float T = 0.54f;    // Relaxation time based on (Moussaid et al., 2009)
     Vector e_i, f_i;
 
@@ -111,7 +90,7 @@ Vector Agent::sfm_driving_force(const Vector position_target) {
     return f_i;
 }
 
-Vector Agent::sfm_agent_interaction_force(std::vector<Agent*> agents) {
+Vector Agent::sfm_agent_interaction_force(const std::vector<Agent*>& agents) const {
     // Constant Values Based on (Moussaid et al., 2009)
     const float lambda = 2.0;    // Weight reflecting relative importance of velocity vector against position vector
     const float gamma = 0.35f;    // Speed interaction
@@ -123,8 +102,6 @@ Vector Agent::sfm_agent_interaction_force(std::vector<Agent*> agents) {
     float B, theta, f_v, f_theta;
     int K;
 
-    f_ij.set(0.0, 0.0);
-
     for (const Agent* agent_j : agents) {
         // Do Not Compute Interaction Force to Itself
         if (agent_j->id != this->id) {
@@ -132,8 +109,7 @@ Vector Agent::sfm_agent_interaction_force(std::vector<Agent*> agents) {
             distance_ij = agent_j->position - this->position;
 
             // Skip Computation if Agents i and j are Too Far Away
-            if (distance_ij.norm_squared() > (2.0 * 2.0))
-                continue;
+            if (distance_ij.norm() > 2.0) continue;
 
             // Compute Direction of Agent j from i
             // Formula: e_ij = (position_j - position_i) / ||position_j - position_i||
@@ -180,7 +156,7 @@ Vector Agent::sfm_agent_interaction_force(std::vector<Agent*> agents) {
     return f_ij;
 }
 
-Vector Agent::sfm_wall_interaction_force(std::vector<Wall*> walls) {
+Vector Agent::sfm_wall_interaction_force(const std::vector<Wall*>& walls) const {
     //const float repulsionRange = 0.3f;	// Repulsion range based on (Moussaid et al., 2009)
     const int a = 3;
     const float b = 0.1f;

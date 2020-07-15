@@ -7,6 +7,7 @@
 #include "vertex_buffer.hpp"
 #include "shader.hpp"
 #include "move_model.hpp"
+#include "random_wrapper.hpp"
 #include <bfreeman/dijkstra_polygon.hpp>
 
 Environment* environment;
@@ -19,7 +20,7 @@ Color agent_color(ORANGE_RGB);
 
 MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
-size_t num_agents = 4;
+size_t num_agents = 100;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -32,7 +33,7 @@ char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
 static void glfw_set_version(int major, int minor) {
-    // 4.1 INTEL-14.6.18, could use lower #version if neccesary
+    // 4.1 INTEL-14.6.18, could use lower #version if necessary
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -68,11 +69,6 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
     return window;
 }
 
-static void init_random() {
-    srand(time(nullptr));
-    srand48(time(nullptr));
-}
-
 static void add_polygon_walls(Polygon* polygon) {
     size_t curr_idx = 0;
     do {
@@ -84,8 +80,8 @@ static void add_polygon_walls(Polygon* polygon) {
 
 static void create_walls() {
     add_polygon_walls(environment->border);
-    for (size_t i = 0; i < environment->obstacles.size(); i++) {
-        add_polygon_walls(environment->obstacles[i]);
+    for (auto& obstacle : environment->obstacles) {
+        add_polygon_walls(obstacle);
     }
 }
 
@@ -93,19 +89,15 @@ static bfreeman::Point vec_to_point(const Vector& vec) {
     return (bfreeman::Point) {vec.x, vec.y};
 }
 
-static Vector point_to_vec(const bfreeman::Point& point) {
-    return Vector(point.x, point.y);
-}
-
 static void populate_dijkstra_polygon(std::vector<std::vector<bfreeman::Point>>& dijkstra_polygon) {
     size_t dijkstra_polygon_idx = 0;
-    for (size_t i = 0; i < environment->border->vertices.size(); i++) {
-        dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(environment->border->vertices[i]));
+    for (auto& vertex : environment->border->vertices) {
+        dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));
     }
-    for (size_t i = 0; i < environment->obstacles.size(); i++) {
+    for (auto& obstacle : environment->obstacles) {
         dijkstra_polygon_idx++;
-        for (size_t j = 0; j < environment->obstacles[i]->vertices.size(); j++) {
-            dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(environment->obstacles[i]->vertices[j]));
+        for (auto& vertex : obstacle->vertices) {
+            dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));
         }
     }
 }
@@ -115,7 +107,7 @@ static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfre
                                                         vec_to_point(
                                                                 environment->random_interior_point(agent->radius)));
     for (size_t i = 1; i < dd.path.size(); i++) {
-        agent->path.push_back((Waypoint) {point_to_vec(dd.path[i]), 3.0f});
+        agent->push_waypoint(dd.path[i].x, dd.path[i].y, 3.0f);
     }
 }
 
@@ -130,6 +122,7 @@ static void create_agents() {
         agent->update_shape();
         move_model->add_agent(agent);
     }
+    int i = 0;
 }
 
 static int show_visualization() {
@@ -191,6 +184,6 @@ static int show_visualization() {
 }
 
 int main(int argc, char** argv) {
-    init_random();
+    init_random(time(nullptr), time(nullptr), time(nullptr));
     return show_visualization();
 }

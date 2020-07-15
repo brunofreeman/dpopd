@@ -18,7 +18,7 @@ set(INC_EXT .hpp)
 
 list(APPEND FILES color graphics_object graphics_util index_buffer renderer shader vertex_array vertex_buffer vertex_buffer_layout)
 list(TRANSFORM FILES PREPEND ${GFX_DIR}/)
-list(APPEND FILES agent environment json_wrapper move_model polygon vector wall)
+list(APPEND FILES agent environment json_wrapper move_model polygon random_wrapper to_string vector wall)
 
 set(INC ${FILES})
 list(TRANSFORM INC PREPEND ${INC_DIR}/)

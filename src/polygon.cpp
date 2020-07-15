@@ -1,10 +1,10 @@
-#include <math.h>
+#include <cmath>
 #include "polygon.hpp"
 
 bool Polygon::is_interior_point(const Vector& point, double radius) const {
     double max_x = 0;
-    for (size_t i = 0; i < this->vertices.size(); i++) {
-        if (this->vertices[i].x > max_x) max_x = this->vertices[i].x;
+    for (auto vertex : this->vertices) {
+        if (vertex.x > max_x) max_x = vertex.x;
     }
 
     Segment pos_x_ray = {point, Vector(max_x + 1, point.y)};
@@ -24,21 +24,6 @@ bool Polygon::is_interior_point(const Vector& point, double radius) const {
 
 bool Polygon::is_interior_point(const Vector& point) const {
     return this->is_interior_point(point, 0.0f);
-}
-
-std::string Polygon::to_string() const {
-    std::string poly_str = "[";
-
-    for (size_t i = 0; i < this->vertices.size(); i++) {
-        poly_str += this->vertices[i].to_string();
-        if (i != this->vertices.size() - 1) {
-            poly_str += ", ";
-        }
-    }
-
-    poly_str += "]";
-
-    return poly_str;
 }
 
 Polygon* regular_ngon(const Vector& center, double r, size_t n) {

@@ -1,18 +1,11 @@
-#include <math.h>
+#include <cmath>
 #include "vector.hpp"
 
 #define min(a, b) a < b ? a : b
 #define max(a, b) a > b ? a : b
-#define square(a) a*a
-
-std::string Vector::to_string() const {
-    return "(" + std::to_string(this->x) + ", "
-           + std::to_string(this->y) + ")";
-}
-
-/* Vector Vector::copy() const {
-    return Vector(this->x, this->y);
-} */
+#define sq(a) a*a
+#define DBL_EPSILON 10e-7
+#define is_close(a, b) abs(a - b) < DBL_EPSILON
 
 void Vector::set(double x, double y) {
     this->x = x;
@@ -20,7 +13,7 @@ void Vector::set(double x, double y) {
 }
 
 double Vector::norm_squared() const {
-    return square(this->x) + square(this->y);
+    return sq(this->x) + sq(this->y);
 }
 
 double Vector::norm() const {
@@ -29,6 +22,7 @@ double Vector::norm() const {
 
 void Vector::normalize() {
     double norm = this->norm();
+    if (is_close(norm, 0)) return;
     this->x /= norm;
     this->y /= norm;
 }
@@ -77,19 +71,20 @@ double dot(const Vector& vec1, const Vector& vec2) {
 
 // returns the smallest angle between the vectors
 double angle(const Vector& vec1, const Vector& vec2) {
-    return acos(dot(vec1, vec2) / (vec1.norm() * vec2.norm()));
+    double z = abs(vec1.x * vec2.y - vec1.y * vec2.x);
+    return abs(atan2(z, dot(vec1, vec2)));
 }
 
 bool on_segment(const Vector& point, const Segment& seg) {
-    return (point.x <= max(seg.p1.x, seg.p2.x) && point.x >= min(seg.p1.x, seg.p2.x) &&
-                                                                                     point.y <= max(seg.p1.y, seg.p2.y)
-                                                                                     && point.y >= min(seg.p1.y,
-                                                                                                       seg.p2.y));
+    return (point.x <= max(seg.p1.x, seg.p2.x) &&
+            point.x >= min(seg.p1.x, seg.p2.x) &&
+            point.y <= max(seg.p1.y, seg.p2.y) &&
+            point.y >= min(seg.p1.y,seg.p2.y));
 }
 
 Orientation orientation(const Vector& p, const Vector& q, const Vector& r) {
     double value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-    if (value == 0) return COLINEAR;
+    if (is_close(value, 0)) return COLINEAR;
     return value > 0 ? CLOCKWISE : COUNTERCLOCKWISE;
 }
 
@@ -99,30 +94,29 @@ bool check_intersect(const Segment& seg1, const Segment& seg2) {
     Orientation o3 = orientation(seg2.p1, seg2.p2, seg1.p1);
     Orientation o4 = orientation(seg2.p1, seg2.p2, seg1.p2);
 
-    /* if (o1 != o2 && o3 != o4) return true;
-    if (o1 == COLINEAR && on_segment(seg2.p1, seg1)) return true;
-    if (o2 == COLINEAR && on_segment(seg2.p2, seg1)) return true;
-    if (o3 == COLINEAR && on_segment(seg1.p1, seg2)) return true;
-    if (o4 == COLINEAR && on_segment(seg1.p2, seg2)) return true;
-    return false; */
-
-    return o1 != o2 && o3 != o4;
+    return (o1 != o2 && o3 != o4) ||
+           (o1 == COLINEAR && on_segment(seg2.p1, seg1)) ||
+           (o2 == COLINEAR && on_segment(seg2.p2, seg1)) ||
+           (o3 == COLINEAR && on_segment(seg1.p1, seg2)) ||
+           (o4 == COLINEAR && on_segment(seg1.p2, seg2));
 }
 
 double length(const Segment& seg) {
     return sqrt(
-            square(seg.p2.x - seg.p1.x) +
-            square(seg.p2.y - seg.p1.y)
+            sq(seg.p2.x - seg.p1.x) +
+            sq(seg.p2.y - seg.p1.y)
     );
 }
 
 double distance(const Vector& point, const Segment& seg) {
+    double len = length(seg);
+    if (len == 0) return sqrt(sq(point.x - seg.p1.x) + sq(point.y - seg.p1.y));
     double distance = abs(
             (seg.p2.y - seg.p1.y) * point.x -
             (seg.p2.x - seg.p1.x) * point.y +
             seg.p2.x * seg.p1.y -
             seg.p2.y * seg.p1.x
     );
-    distance /= length(seg);
+    distance /= len;
     return distance;
 }

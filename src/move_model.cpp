@@ -14,7 +14,7 @@ void MoveModel::add_wall(Wall* wall) {
 }
 
 void MoveModel::delete_agent() {
-    int last_idx;
+    size_t last_idx;
     if (!this->crowd.empty()) {
         last_idx = this->crowd.size() - 1;
         delete this->crowd[last_idx];
@@ -23,21 +23,21 @@ void MoveModel::delete_agent() {
 }
 
 void MoveModel::delete_crowd() {
-    for (size_t i = 0; i < this->crowd.size(); i++) {
-        delete this->crowd[i];
+    for (auto& agent : this->crowd) {
+        delete agent;
     }
     this->crowd.clear();
 }
 
 void MoveModel::delete_walls() {
-    for (size_t i = 0; i < this->walls.size(); i++) {
-        delete this->walls[i];
+    for (auto& wall : this->walls) {
+        delete wall;
     }
     this->walls.clear();
 }
 
 void MoveModel::sfm_move_crowd(float step_time) {
-    for (size_t i = 0; i < this->crowd.size(); i++) {
-        this->crowd[i]->sfm_move(this->crowd, this->walls, step_time);
+    for (auto& agent : this->crowd) {
+        agent->sfm_move(this->crowd, this->walls, step_time);
     }
 }
