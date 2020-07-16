@@ -35,26 +35,39 @@ void Agent::update_shape() {
     this->prev_update_pos = this->position;
 }
 
-void Agent::push_waypoint(float x, float y, float waypoint_radius) {
+void Agent::push_waypoint(const float x, const float y, const float waypoint_radius) {
     this->path.push_back((Waypoint) {Vector(x, y), waypoint_radius});
 }
 
-Vector Agent::immediate_goal() {
+void Agent::refresh_immediate_goal() {
     Vector distance = this->path.front().position - this->position;
-    bool in_waypoint = distance.norm() < this->path.front().radius;
+    double dist = distance.norm();
+    bool close = dist < this->path.front().radius;
+    bool really_close = dist < this->radius * 1.5;
 
-    if (in_waypoint && this->path.size() > 1) {
-        this->path.pop_front();
+    if (this->path.size() > 1) {
         this->is_pathing = true;
-        return this->path.front().position;
+        Segment seg = {this->path.front().position, this->path[1].position};
+        bool in_waypoint = close &&
+                           (below_or_on_line(this->last_waypoint_pos, seg) ^
+                            below_or_on_line(this->position, seg));
+        if (in_waypoint) {
+            this->last_waypoint_pos = this->path.front().position;
+            this->path.pop_front();
+        }
+        this->immediate_goal = this->path.front().position;
+        if (really_close && !in_waypoint) {
+            this->immediate_goal.away(this->last_waypoint_pos, this->radius);
+        }
+    } else {
+        this->is_pathing = !close;
+        this->immediate_goal = this->path.front().position;
     }
-
-    this->is_pathing = !in_waypoint || this->path.size() > 1;
-    return this->path.front().position;
 }
 
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
-    Vector acceleration = this->sfm_driving_force(immediate_goal()) +
+    this->refresh_immediate_goal();
+    Vector acceleration = this->sfm_driving_force(this->immediate_goal) +
                           this->sfm_agent_interaction_force(agents) +
                           this->sfm_wall_interaction_force(walls);
 

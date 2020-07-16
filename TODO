@@ -1,11 +1,6 @@
 --Bugs--
-TODO: SFM/waypoints have trouble dealing with sharp corners
-        * agents can get stuck when a waypoint pops
-        * and the straight-line path to the next waypoint
-        * is through a wall
-TODO: if waypoint size to proximity ratio is too large
-        * can pop two waypoints immediately
-        * causes problems when going around two close corners
+TODO: mainly fixed, but a few pedestrians still get stuck
+        * analyze stuck pedestrians on seed (106, 107, 108)
 
 --Optimization--
 

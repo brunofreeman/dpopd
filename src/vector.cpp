@@ -34,6 +34,20 @@ void Vector::rotate(double angle) {
     this->y = y;
 }
 
+void Vector::towards(const Vector& other, const double distance) {
+    Vector other_relative = other - *this;
+    other_relative /= other_relative.norm();
+    other_relative *= distance;
+    *this += other_relative;
+}
+
+void Vector::away(const Vector& other, const double distance) {
+    Vector other_relative = other - *this;
+    other_relative /= other_relative.norm();
+    other_relative *= distance;
+    *this -= other_relative;
+}
+
 void operator+=(Vector& vec, const Vector& vec_const) {
     vec.x += vec_const.x;
     vec.y += vec_const.y;
@@ -47,6 +61,15 @@ void operator-=(Vector& vec, const Vector& vec_const) {
 void operator*=(Vector& vec, const double& scalar) {
     vec.x *= scalar;
     vec.y *= scalar;
+}
+
+void operator/=(Vector& vec, const double& scalar) {
+    vec.x /= scalar;
+    vec.y /= scalar;
+}
+
+bool operator==(const Vector& vec1, const Vector& vec2) {
+    return is_close(vec1.x, vec2.x) && is_close(vec1.y, vec2.y);
 }
 
 Vector operator+(const Vector& vec1, const Vector& vec2) {
@@ -73,6 +96,12 @@ double dot(const Vector& vec1, const Vector& vec2) {
 double angle(const Vector& vec1, const Vector& vec2) {
     double z = abs(vec1.x * vec2.y - vec1.y * vec2.x);
     return abs(atan2(z, dot(vec1, vec2)));
+}
+
+bool below_or_on_line(const Vector& point, const Segment& seg) {
+    if (is_close(seg.p1.x, seg.p2.x)) return point.x <= seg.p1.x;
+    double slope = (seg.p1.y - seg.p2.y) / (seg.p1.x - seg.p2.x);
+    return point.y <= slope * point.x - slope * seg.p1.x + seg.p1.y;
 }
 
 bool on_segment(const Vector& point, const Segment& seg) {

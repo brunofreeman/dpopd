@@ -22,10 +22,9 @@ MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
 size_t num_agents = 100;
 
-// 0.2f for agent and 3.0f for waypoint determined by external repo
+// radii given by external repo
 float agent_radius = 0.2f;
-float corner_waypoint_radius = 3.0f;
-float open_waypoint_radius = 3.0f;
+float waypoint_radius = 3.0f;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -74,7 +73,7 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
     return window;
 }
 
-static void add_polygon_walls(Polygon* polygon) {
+static void add_polygon_walls(const Polygon* polygon) {
     size_t curr_idx = 0;
     do {
         size_t next_idx = (curr_idx + 1) % polygon->vertices.size();
@@ -112,8 +111,7 @@ static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfre
                                                         vec_to_point(
                                                                 environment->random_interior_point(agent->radius)));
     for (size_t i = 1; i < dd.path.size(); i++) {
-        agent->push_waypoint(dd.path[i].x, dd.path[i].y,
-                i == dd.path.size() - 1 ? open_waypoint_radius : corner_waypoint_radius);
+        agent->push_waypoint(dd.path[i].x, dd.path[i].y, waypoint_radius);
     }
 }
 
@@ -124,6 +122,7 @@ static void create_agents() {
     for (size_t i = 0; i < num_agents; i++) {
         agent = new Agent(move_model_type, agent_radius);
         agent->position = environment->random_interior_point(agent->radius);
+        agent->last_waypoint_pos = agent->position;
         set_agent_waypoints(agent, dijkstra_polygon);
         agent->update_shape();
         move_model->add_agent(agent);

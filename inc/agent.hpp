@@ -22,6 +22,8 @@ public:
     static const size_t shape_sides = 10;
 
     bool is_pathing;
+    Vector last_waypoint_pos;
+    Vector immediate_goal;
 
     Vector prev_update_pos;
     Polygon* shape;
@@ -34,7 +36,7 @@ public:
     std::deque<Waypoint> path;
     Vector velocity;
 
-    explicit Agent(const MoveModelType& move_model_type, const float radius);
+    explicit Agent(const MoveModelType& move_model_type, float radius);
 
     ~Agent();
 
@@ -42,11 +44,11 @@ public:
 
     void push_waypoint(float x, float y, float waypoint_radius);
 
-    Vector immediate_goal();
+    void refresh_immediate_goal();
 
-    [[nodiscard]] Vector sfm_driving_force(const Vector& position_target) const;            // Computes f_i
-    [[nodiscard]] Vector sfm_agent_interaction_force(const std::vector<Agent*>& agents) const;    // Computes f_ij
-    [[nodiscard]] Vector sfm_wall_interaction_force(const std::vector<Wall*>& walls) const;    // Computes f_iw
+    [[nodiscard]] Vector sfm_driving_force(const Vector& position_target) const;
+    [[nodiscard]] Vector sfm_agent_interaction_force(const std::vector<Agent*>& agents) const;
+    [[nodiscard]] Vector sfm_wall_interaction_force(const std::vector<Wall*>& walls) const;
     void sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time);
 };
 
