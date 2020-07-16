@@ -4,12 +4,11 @@
 
 size_t Agent::crowd_size = 0;
 
-Agent::Agent(const MoveModelType& move_model_type) {
+Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(radius), is_pathing(true) {
     this->id = Agent::crowd_size++;
 
     switch (move_model_type) {
         case SOCIAL_FORCE_MODEL:
-            this->radius = 0.2f;
             // (Moussaid et al., 2009)
             this->desired_speed = from_normal_distribution(1.29, 0.19);
             break;
@@ -41,31 +40,26 @@ void Agent::push_waypoint(float x, float y, float waypoint_radius) {
 }
 
 Vector Agent::immediate_goal() {
-    if (this->path.empty()) return this->position;
-
     Vector distance = this->path.front().position - this->position;
+    bool in_waypoint = distance.norm() < this->path.front().radius;
 
-    if (distance.norm() < this->path.front().radius) {
+    if (in_waypoint && this->path.size() > 1) {
         this->path.pop_front();
-        if (this->path.empty()) return this->position;
+        this->is_pathing = true;
+        return this->path.front().position;
     }
 
+    this->is_pathing = !in_waypoint || this->path.size() > 1;
     return this->path.front().position;
 }
 
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
-    Vector goal = immediate_goal();
-    Vector vec1 = this->sfm_driving_force(goal);
-    Vector vec2 = this->sfm_agent_interaction_force(agents);
-    Vector vec3 = this->sfm_wall_interaction_force(walls);
-    Vector acceleration = vec1 + vec2 + vec3;
-    /*Vector acceleration = this->sfm_driving_force(immediate_goal()) +
+    Vector acceleration = this->sfm_driving_force(immediate_goal()) +
                           this->sfm_agent_interaction_force(agents) +
-                          this->sfm_wall_interaction_force(walls);*/
+                          this->sfm_wall_interaction_force(walls);
 
     this->velocity += acceleration * step_time;
 
-    // Truncate Velocity if Exceed Maximum Speed (Magnitude)
     if (this->velocity.norm() > this->desired_speed) {
         this->velocity.normalize();
         this->velocity *= this->desired_speed;

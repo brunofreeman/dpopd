@@ -1,8 +1,11 @@
 --Bugs--
-TODO: once and a while an agent will get out of bounds
-        * investigate the narrow protrusion on irregular_1 and _2
-        * looks like some pedestrians try to push out of the tip of
-        * the protrusion -- bad path from dijkstra_polygon?
+TODO: SFM/waypoints have trouble dealing with sharp corners
+        * agents can get stuck when a waypoint pops
+        * and the straight-line path to the next waypoint
+        * is through a wall
+TODO: if waypoint size to proximity ratio is too large
+        * can pop two waypoints immediately
+        * causes problems when going around two close corners
 
 --Optimization--
 
@@ -11,7 +14,7 @@ TODO: refactor external SFM code
 TODO: comments/documentation!
 
 --Features--
-TODO: make sure that SFM constants are at appropriate scale
+TODO: option for adding agents based on unscaled, non-normalized coords
 
 --Project--
 TODO: make Readme nicer

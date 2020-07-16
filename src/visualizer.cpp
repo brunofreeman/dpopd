@@ -4,7 +4,6 @@
 #include "json_wrapper.hpp"
 #include "graphics_util.hpp"
 #include "renderer.hpp"
-#include "vertex_buffer.hpp"
 #include "shader.hpp"
 #include "move_model.hpp"
 #include "random_wrapper.hpp"
@@ -16,11 +15,17 @@ float padding = 0.05f;
 Color environment_color(SILVER_RGB);
 
 GraphicsObject** agos;
-Color agent_color(ORANGE_RGB);
+Color agent_pathing_color(ORANGE_RGB);
+Color agent_stationary_color(GREEN_RGB);
 
 MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
 size_t num_agents = 100;
+
+// 0.2f for agent and 3.0f for waypoint determined by external repo
+float agent_radius = 0.2f;
+float corner_waypoint_radius = 3.0f;
+float open_waypoint_radius = 3.0f;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -28,7 +33,7 @@ char glfw_version_minor = 1;
 short screen_width = 640;
 short screen_height = 480;
 
-char environment_name[] = "penta_in_hepta_walls_1";
+char environment_name[] = "irregular_2";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
@@ -107,7 +112,8 @@ static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfre
                                                         vec_to_point(
                                                                 environment->random_interior_point(agent->radius)));
     for (size_t i = 1; i < dd.path.size(); i++) {
-        agent->push_waypoint(dd.path[i].x, dd.path[i].y, 3.0f);
+        agent->push_waypoint(dd.path[i].x, dd.path[i].y,
+                i == dd.path.size() - 1 ? open_waypoint_radius : corner_waypoint_radius);
     }
 }
 
@@ -116,13 +122,12 @@ static void create_agents() {
     std::vector<std::vector<bfreeman::Point>> dijkstra_polygon(environment->obstacles.size() + 1);
     populate_dijkstra_polygon(dijkstra_polygon);
     for (size_t i = 0; i < num_agents; i++) {
-        agent = new Agent(move_model_type);
+        agent = new Agent(move_model_type, agent_radius);
         agent->position = environment->random_interior_point(agent->radius);
         set_agent_waypoints(agent, dijkstra_polygon);
         agent->update_shape();
         move_model->add_agent(agent);
     }
-    int i = 0;
 }
 
 static int show_visualization() {
@@ -163,9 +168,10 @@ static int show_visualization() {
         set_color(shader, environment_color);
         draw(ego, shader);
 
-        set_color(shader, agent_color);
         for (size_t i = 0; i < move_model->crowd.size(); i++) {
             move_model->crowd[i]->update_shape();
+            if (move_model->crowd[i]->is_pathing) set_color(shader, agent_pathing_color);
+            else set_color(shader, agent_stationary_color);
             refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
         }
@@ -184,6 +190,7 @@ static int show_visualization() {
 }
 
 int main(int argc, char** argv) {
-    init_random(time(nullptr), time(nullptr), time(nullptr));
+    // init_random(time(nullptr), time(nullptr), time(nullptr));
+    init_random(106, 107, 108);
     return show_visualization();
 }

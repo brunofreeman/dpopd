@@ -21,6 +21,8 @@ public:
     static size_t crowd_size;
     static const size_t shape_sides = 10;
 
+    bool is_pathing;
+
     Vector prev_update_pos;
     Polygon* shape;
 
@@ -32,7 +34,7 @@ public:
     std::deque<Waypoint> path;
     Vector velocity;
 
-    explicit Agent(const MoveModelType& move_model_type);
+    explicit Agent(const MoveModelType& move_model_type, const float radius);
 
     ~Agent();
 
