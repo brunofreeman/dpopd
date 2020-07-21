@@ -24,8 +24,10 @@ public:
     bool is_pathing;
     bool at_corner;
     Orientation corner_direction;
-    //Vector last_waypoint_pos;
     Vector immediate_goal;
+
+    size_t ticks;
+    bool needs_repathing;
 
     Vector prev_update_pos;
     Polygon* shape;
@@ -49,8 +51,6 @@ public:
     [[nodiscard]] bool clear_path_to(const Vector& to, const std::vector<Wall*>& walls) const;
 
     void update_corner_direction();
-
-    //Wall* get_nearest_corner_wall(const std::vector<Wall*>& walls) const;
 
     void refresh_immediate_goal(const std::vector<Wall*>& walls);
 

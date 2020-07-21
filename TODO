@@ -1,6 +1,4 @@
 --Bugs--
-TODO: seed (106, 107, 108), irregular_2, id 83 gets pushed to wrong side of obstacle
-        * need stuck condition that recalculates dijkstra_polygon path
 
 --Optimization--
 
@@ -12,6 +10,7 @@ TODO: unnecessary functions in headers
 
 --Features--
 TODO: option for adding agents based on unscaled, non-normalized coords
+TODO: config file for magic numbers that doesn't trigger any GPL-3.0 clauses
 
 --Project--
 TODO: make Readme nicer

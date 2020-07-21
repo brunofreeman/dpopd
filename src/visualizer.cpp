@@ -14,6 +14,8 @@ GraphicsObject* ego;
 float padding = 0.05f;
 Color environment_color(SILVER_RGB);
 
+std::vector<std::vector<bfreeman::Point>> dijkstra_polygon;
+
 GraphicsObject** agos;
 Color agent_pathing_color(ORANGE_RGB);
 Color agent_stationary_color(GREEN_RGB);
@@ -93,7 +95,8 @@ static bfreeman::Point vec_to_point(const Vector& vec) {
     return (bfreeman::Point) {vec.x, vec.y};
 }
 
-static void populate_dijkstra_polygon(std::vector<std::vector<bfreeman::Point>>& dijkstra_polygon) {
+static void populate_dijkstra_polygon() {
+    dijkstra_polygon = std::vector<std::vector<bfreeman::Point>> (environment->obstacles.size() + 1);
     size_t dijkstra_polygon_idx = 0;
     for (auto& vertex : environment->border->vertices) {
         dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));
@@ -106,13 +109,13 @@ static void populate_dijkstra_polygon(std::vector<std::vector<bfreeman::Point>>&
     }
 }
 
-static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfreeman::Point>>& dijkstra_polygon) {
+static void set_agent_waypoints(Agent* agent, const Vector& goal) {
     bfreeman::DijkstraData dd = bfreeman::dijkstra_path(dijkstra_polygon, vec_to_point(agent->position),
-                                                        vec_to_point(
-                                                                environment->random_interior_point(agent->radius)));
+                                                        vec_to_point(goal));
     /*bfreeman::DijkstraData dd = bfreeman::dijkstra_path(dijkstra_polygon, vec_to_point(agent->position),
                                                         vec_to_point(
                                                                 Vector(15,55)));*/
+    agent->path.clear();
     for (size_t i = 1; i < dd.path.size(); i++) {
         agent->push_waypoint(dd.path[i].x, dd.path[i].y, waypoint_radius);
     }
@@ -120,13 +123,11 @@ static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfre
 
 static void create_agents() {
     Agent* agent;
-    std::vector<std::vector<bfreeman::Point>> dijkstra_polygon(environment->obstacles.size() + 1);
-    populate_dijkstra_polygon(dijkstra_polygon);
     for (size_t i = 0; i < num_agents; i++) {
         agent = new Agent(move_model_type, agent_radius);
         agent->position = environment->random_interior_point(agent->radius);
         //agent->last_waypoint_pos = agent->position;
-        set_agent_waypoints(agent, dijkstra_polygon);
+        set_agent_waypoints(agent, environment->random_interior_point(agent->radius));
         agent->update_corner_direction();
         agent->update_shape();
         move_model->add_agent(agent);
@@ -148,6 +149,7 @@ static int show_visualization() {
     Shader shader(shader_path);
 
     environment = json_environment(environment_name);
+    populate_dijkstra_polygon();
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
     move_model = new MoveModel();
@@ -183,6 +185,10 @@ static int show_visualization() {
             else set_color(shader, agent_stationary_color);
             refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
+            if (move_model->crowd[i]->needs_repathing) {
+                set_agent_waypoints(move_model->crowd[i], move_model->crowd[i]->path.back().position);
+                move_model->crowd[i]->needs_repathing = false;
+            }
         }
 
         glfwSwapBuffers(window);
@@ -199,7 +205,7 @@ static int show_visualization() {
 }
 
 int main(int argc, char** argv) {
-    // init_random(time(nullptr), time(nullptr), time(nullptr));
-    init_random(106, 107, 108);
+    init_random(time(nullptr), time(nullptr), time(nullptr));
+    // init_random(106, 107, 108);
     return show_visualization();
 }

@@ -4,7 +4,9 @@
 
 size_t Agent::crowd_size = 0;
 
-Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(radius), is_pathing(true) {
+Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(radius), is_pathing(true),
+        at_corner(false), shape(nullptr), corner_direction(CLOCKWISE), needs_repathing(false), ticks(0) {
+
     this->id = Agent::crowd_size++;
 
     switch (move_model_type) {
@@ -13,9 +15,6 @@ Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(
             this->desired_speed = from_normal_distribution(1.29, 0.19);
             break;
     }
-
-    this->at_corner = false;
-    this->shape = nullptr;
 }
 
 Agent::~Agent() {
@@ -77,6 +76,7 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
         this->is_pathing = true;
         if (in_waypoint || this->at_corner) {
             this->at_corner = true;
+            this->update_corner_direction();
             Vector next_waypoint = this->path[1].position.clone();
             Vector nearest_point_next_waypoint = next_waypoint.clone();
             nearest_point_next_waypoint.towards(this->position, this->radius);
@@ -92,7 +92,6 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
             if (path_clear) {
                 this->path.pop_front();
                 this->immediate_goal = this->path.front().position;
-                this->update_corner_direction();
                 this->at_corner = false;
             } else {
                 this->immediate_goal = this->path.front().position.clone();
@@ -111,7 +110,7 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
         this->immediate_goal = this->path.front().position;
     }
 }
-// gets bullied into wrong side: id 83
+// osc.: 23
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
     this->refresh_immediate_goal(walls);
     Vector acceleration = this->sfm_driving_force(this->immediate_goal) +
@@ -119,6 +118,18 @@ void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>
                           this->sfm_wall_interaction_force(walls);
 
     this->velocity += acceleration * step_time;
+
+    size_t ticks_per_check = 100;
+
+    if (ticks++ == ticks_per_check) {
+        double stuck_factor = 4;
+        this-> needs_repathing = !this->path.empty() &&
+                                 this->velocity.norm() < (this->desired_speed / stuck_factor) &&
+                                 !this->clear_path_to(this->path[0].position, walls);
+        this->ticks = 0;
+    }
+
+
 
     if (this->velocity.norm() > this->desired_speed) {
         this->velocity.normalize();
