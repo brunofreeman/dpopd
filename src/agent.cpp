@@ -14,6 +14,7 @@ Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(
             break;
     }
 
+    this->at_corner = false;
     this->shape = nullptr;
 }
 
@@ -39,34 +40,80 @@ void Agent::push_waypoint(const float x, const float y, const float waypoint_rad
     this->path.push_back((Waypoint) {Vector(x, y), waypoint_radius});
 }
 
-void Agent::refresh_immediate_goal() {
+Segment wall_to_seg(const Wall& wall) {
+    return (Segment){
+            (Vector){wall.wall.start.x, wall.wall.start.y},
+            (Vector){wall.wall.end.x, wall.wall.end.y}
+    };
+}
+
+bool Agent::clear_path_to(const Vector& to, const std::vector<Wall*>& walls) const {
+    size_t num_points = 4;
+    for (size_t i = 0; i < num_points; i++) {
+        auto point = Vector(this->radius);
+        point.rotate(2 * M_PI * i / num_points);
+        point += this->position;
+        auto seg = (Segment){point, to};
+        for (auto& wall : walls) {
+            if (check_intersect_no_endpoints(seg, wall_to_seg(*wall))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void Agent::update_corner_direction() {
+    this->corner_direction = orientation(this->position, this->path[0].position, this->path[1].position);
+}
+
+void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
     Vector distance = this->path.front().position - this->position;
     double dist = distance.norm();
-    bool close = dist < this->path.front().radius;
-    bool really_close = dist < this->radius * 1.5;
+    bool in_waypoint = dist < this->path.front().radius;
+    bool near_center = dist < this->radius * 1.5;
 
     if (this->path.size() > 1) {
         this->is_pathing = true;
-        Segment seg = {this->path.front().position, this->path[1].position};
-        bool in_waypoint = close &&
-                           (below_or_on_line(this->last_waypoint_pos, seg) ^
-                            below_or_on_line(this->position, seg));
-        if (in_waypoint) {
-            this->last_waypoint_pos = this->path.front().position;
-            this->path.pop_front();
-        }
-        this->immediate_goal = this->path.front().position;
-        if (really_close && !in_waypoint) {
-            this->immediate_goal.away(this->last_waypoint_pos, this->radius);
+        if (in_waypoint || this->at_corner) {
+            this->at_corner = true;
+            Vector next_waypoint = this->path[1].position.clone();
+            Vector nearest_point_next_waypoint = next_waypoint.clone();
+            nearest_point_next_waypoint.towards(this->position, this->radius);
+
+            Segment seg = {next_waypoint, nearest_point_next_waypoint};
+            Segment seg_ccw = rotate_segment(seg, M_PI / 8);
+            Segment seg_cw = rotate_segment(seg, -M_PI / 8);
+
+            bool path_clear = this->clear_path_to(seg.p2, walls) ||
+                              this->clear_path_to(seg_ccw.p2, walls) ||
+                              this->clear_path_to(seg_cw.p2, walls);
+
+            if (path_clear) {
+                this->path.pop_front();
+                this->immediate_goal = this->path.front().position;
+                this->update_corner_direction();
+                this->at_corner = false;
+            } else {
+                this->immediate_goal = this->path.front().position.clone();
+                this->immediate_goal.towards(this->position, this->radius);
+                Vector increment = this->path.front().position - this->position;
+                increment.normalize();
+                increment.rotate(this->corner_direction == CLOCKWISE ? M_PI_2: -M_PI_2);
+                increment *= this->radius;
+                this->immediate_goal += increment;
+            }
+        } else {
+            this->immediate_goal = this->path.front().position;
         }
     } else {
-        this->is_pathing = !close;
+        this->is_pathing = !near_center;
         this->immediate_goal = this->path.front().position;
     }
 }
-
+// gets bullied into wrong side: id 83
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
-    this->refresh_immediate_goal();
+    this->refresh_immediate_goal(walls);
     Vector acceleration = this->sfm_driving_force(this->immediate_goal) +
                           this->sfm_agent_interaction_force(agents) +
                           this->sfm_wall_interaction_force(walls);

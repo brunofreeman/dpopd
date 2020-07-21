@@ -16,13 +16,15 @@ public:
 
     Vector(double x, double y) : x(x), y(y) {}
 
-    Vector(double x) : x(x), y(0) {}
+    explicit Vector(double x) : x(x), y(0) {}
+
+    [[nodiscard]] Vector clone() const;
 
     void set(double x, double y);
 
-    double norm_squared() const;
+    [[nodiscard]] double norm_squared() const;
 
-    double norm() const;
+    [[nodiscard]] double norm() const;
 
     void normalize();
 
@@ -63,14 +65,20 @@ double angle(const Vector& vec1, const Vector& vec2);
 
 bool below_or_on_line(const Vector& point, const Segment& seg);
 
+// for colinear points
 bool on_segment(const Vector& point, const Segment& seg);
 
 Orientation orientation(const Vector& p, const Vector& q, const Vector& r);
 
 bool check_intersect(const Segment& seg1, const Segment& seg2);
 
+bool check_intersect_no_endpoints(const Segment& seg1, const Segment& seg2);
+
 double length(const Segment&);
 
 double distance(const Vector& point, const Segment& seg);
+
+// rotates around p1
+Segment rotate_segment(const Segment& seg, double angle);
 
 #endif // #ifndef __VECTOR_HPP__

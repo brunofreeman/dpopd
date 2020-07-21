@@ -1,12 +1,14 @@
 --Bugs--
-TODO: mainly fixed, but a few pedestrians still get stuck
-        * analyze stuck pedestrians on seed (106, 107, 108)
+TODO: seed (106, 107, 108), irregular_2, id 83 gets pushed to wrong side of obstacle
+        * need stuck condition that recalculates dijkstra_polygon path
 
 --Optimization--
 
 --Code Improvement--
 TODO: refactor external SFM code
 TODO: comments/documentation!
+TODO: public/private in classes
+TODO: unnecessary functions in headers
 
 --Features--
 TODO: option for adding agents based on unscaled, non-normalized coords

@@ -7,12 +7,12 @@ Environment::Environment(Polygon* border, std::vector<Polygon*> obstacles) :
     this->width = 0;
     this->height = 0;
 
-    for (size_t i = 0; i < border->vertices.size(); i++) {
-        if (border->vertices[i].x > width) {
-            this->width = border->vertices[i].x;
+    for (auto& vertex : border->vertices) {
+        if (vertex.x > width) {
+            this->width = vertex.x;
         }
-        if (border->vertices[i].y > height) {
-            this->height = border->vertices[i].y;
+        if (vertex.y > height) {
+            this->height = vertex.y;
         }
     }
 }
@@ -26,8 +26,8 @@ Environment::~Environment() {
 
 bool Environment::is_interior_point(const Vector& point, double radius) const {
     if (!this->border->is_interior_point(point, radius)) return false;
-    for (auto obstacle : this->obstacles) {
-        if (obstacle->is_interior_point(point, radius)) return false;
+    for (auto& obstacle : this->obstacles) {
+        if (obstacle->is_interior_point(point, 0)) return false;
     }
     return true;
 }

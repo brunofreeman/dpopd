@@ -110,6 +110,9 @@ static void set_agent_waypoints(Agent* agent, const std::vector<std::vector<bfre
     bfreeman::DijkstraData dd = bfreeman::dijkstra_path(dijkstra_polygon, vec_to_point(agent->position),
                                                         vec_to_point(
                                                                 environment->random_interior_point(agent->radius)));
+    /*bfreeman::DijkstraData dd = bfreeman::dijkstra_path(dijkstra_polygon, vec_to_point(agent->position),
+                                                        vec_to_point(
+                                                                Vector(15,55)));*/
     for (size_t i = 1; i < dd.path.size(); i++) {
         agent->push_waypoint(dd.path[i].x, dd.path[i].y, waypoint_radius);
     }
@@ -122,11 +125,18 @@ static void create_agents() {
     for (size_t i = 0; i < num_agents; i++) {
         agent = new Agent(move_model_type, agent_radius);
         agent->position = environment->random_interior_point(agent->radius);
-        agent->last_waypoint_pos = agent->position;
+        //agent->last_waypoint_pos = agent->position;
         set_agent_waypoints(agent, dijkstra_polygon);
+        agent->update_corner_direction();
         agent->update_shape();
         move_model->add_agent(agent);
     }
+    /*agent = new Agent(move_model_type, agent_radius);
+    agent->position = Vector(20, 22);
+    //agent->last_waypoint_pos = agent->position;
+    set_agent_waypoints(agent, dijkstra_polygon);
+    agent->update_shape();
+    move_model->add_agent(agent);*/
 }
 
 static int show_visualization() {
