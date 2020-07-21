@@ -1,7 +1,11 @@
 #ifndef __COLOR_HPP__
 #define __COLOR_HPP__
 
-// equivalent to HTML color codes
+/*
+ * Equivalent to HTML color codes
+ * Expressed as float list representing RGB
+ * on a scale of [0.0, 1.0]
+ */
 #define RED_RGB 1.0f, 0.0f, 0.0f
 #define CYAN_RGB 0.0f, 1.0f, 1.0f
 #define BLUE_RGB 0.0f, 0.0f, 1.0f
@@ -23,10 +27,10 @@
 
 class Color {
 public:
-    float r;
-    float g;
-    float b;
-    float a;
+    float r; // red
+    float g; // green
+    float b; // blue
+    float a; // alpha
 
     Color() : r(0.0f), g(0.0f), b(0.0f), a(1.0f) {}
 

@@ -3,6 +3,11 @@
 
 #include <cstdlib>
 
+/*
+ * Contains the raw data for a VertexArray,
+ * but does not contain info on how that data
+ * should be read
+ */
 class VertexBuffer {
 public:
     unsigned int id;

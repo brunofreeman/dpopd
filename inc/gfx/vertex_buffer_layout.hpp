@@ -5,6 +5,12 @@
 #include <GL/glew.h>
 #include "vertex_buffer.hpp"
 
+/*
+ * Contains information on how data from
+ * a VertexBuffer is structured (e.g.,
+ * it contains a series of points each
+ * consisting of two floats)
+ */
 struct VertexBufferElement {
     unsigned int type;
     size_t count;
@@ -13,7 +19,6 @@ struct VertexBufferElement {
     static unsigned int size(unsigned int type) {
         switch (type) {
             case GL_FLOAT:
-                return 4;
             case GL_UNSIGNED_INT:
                 return 4;
             case GL_UNSIGNED_BYTE:
@@ -31,7 +36,7 @@ public:
 
     VertexBufferLayout() : stride(0) {}
 
-    ~VertexBufferLayout() {}
+    ~VertexBufferLayout() = default;
 
     void push_f(size_t count);
 

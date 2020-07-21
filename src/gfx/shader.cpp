@@ -3,7 +3,6 @@
 #include <sstream>
 #include <GL/glew.h>
 #include "shader.hpp"
-#include "renderer.hpp"
 
 Shader::Shader(const std::string& filepath) : id(0) {
     ShaderSource shader_src = this->parse(filepath);

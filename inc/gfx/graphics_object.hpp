@@ -4,6 +4,11 @@
 #include "vertex_array.hpp"
 #include "index_buffer.hpp"
 
+/*
+ * A bundle of info necessary to
+ * render obj graphically using
+ * OpenGL.
+ */
 class GraphicsObject {
 public:
     void* obj;

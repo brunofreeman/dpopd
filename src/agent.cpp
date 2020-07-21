@@ -5,7 +5,9 @@
 size_t Agent::crowd_size = 0;
 
 Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(radius), is_pathing(true),
-        at_corner(false), shape(nullptr), corner_direction(CLOCKWISE), needs_repathing(false), ticks(0) {
+                                                                         at_corner(false), shape(nullptr),
+                                                                         corner_direction(CLOCKWISE),
+                                                                         needs_repathing(false), ticks(0) {
 
     this->id = Agent::crowd_size++;
 
@@ -40,9 +42,9 @@ void Agent::push_waypoint(const float x, const float y, const float waypoint_rad
 }
 
 Segment wall_to_seg(const Wall& wall) {
-    return (Segment){
-            (Vector){wall.wall.start.x, wall.wall.start.y},
-            (Vector){wall.wall.end.x, wall.wall.end.y}
+    return (Segment) {
+            (Vector) {wall.wall.start.x, wall.wall.start.y},
+            (Vector) {wall.wall.end.x, wall.wall.end.y}
     };
 }
 
@@ -52,7 +54,7 @@ bool Agent::clear_path_to(const Vector& to, const std::vector<Wall*>& walls) con
         auto point = Vector(this->radius);
         point.rotate(2 * M_PI * i / num_points);
         point += this->position;
-        auto seg = (Segment){point, to};
+        auto seg = (Segment) {point, to};
         for (auto& wall : walls) {
             if (check_intersect_no_endpoints(seg, wall_to_seg(*wall))) {
                 return false;
@@ -98,7 +100,7 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
                 this->immediate_goal.towards(this->position, this->radius);
                 Vector increment = this->path.front().position - this->position;
                 increment.normalize();
-                increment.rotate(this->corner_direction == CLOCKWISE ? M_PI_2: -M_PI_2);
+                increment.rotate(this->corner_direction == CLOCKWISE ? M_PI_2 : -M_PI_2);
                 increment *= this->radius;
                 this->immediate_goal += increment;
             }
@@ -110,6 +112,7 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
         this->immediate_goal = this->path.front().position;
     }
 }
+
 // osc.: 23
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
     this->refresh_immediate_goal(walls);
@@ -123,12 +126,11 @@ void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>
 
     if (ticks++ == ticks_per_check) {
         double stuck_factor = 4;
-        this-> needs_repathing = !this->path.empty() &&
-                                 this->velocity.norm() < (this->desired_speed / stuck_factor) &&
-                                 !this->clear_path_to(this->path[0].position, walls);
+        this->needs_repathing = !this->path.empty() &&
+                                this->velocity.norm() < (this->desired_speed / stuck_factor) &&
+                                !this->clear_path_to(this->path[0].position, walls);
         this->ticks = 0;
     }
-
 
 
     if (this->velocity.norm() > this->desired_speed) {

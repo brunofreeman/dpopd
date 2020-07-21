@@ -4,6 +4,12 @@
 #include <string>
 #include <unordered_map>
 
+/*
+ * Contains information on a vertex and
+ * fragment shader pair (where to color
+ * and how to color)
+ */
+
 struct ShaderSource {
     std::string vertex_src;
     std::string fragment_src;

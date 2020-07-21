@@ -96,7 +96,7 @@ static bfreeman::Point vec_to_point(const Vector& vec) {
 }
 
 static void populate_dijkstra_polygon() {
-    dijkstra_polygon = std::vector<std::vector<bfreeman::Point>> (environment->obstacles.size() + 1);
+    dijkstra_polygon = std::vector<std::vector<bfreeman::Point>>(environment->obstacles.size() + 1);
     size_t dijkstra_polygon_idx = 0;
     for (auto& vertex : environment->border->vertices) {
         dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));

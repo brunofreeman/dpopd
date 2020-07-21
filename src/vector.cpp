@@ -112,7 +112,7 @@ bool on_segment(const Vector& point, const Segment& seg) {
     bool on = (point.x <= (max(seg.p1.x, seg.p2.x)) &&
                point.x >= (min(seg.p1.x, seg.p2.x)) &&
                point.y <= (max(seg.p1.y, seg.p2.y)) &&
-               point.y >= (min(seg.p1.y,seg.p2.y)));
+               point.y >= (min(seg.p1.y, seg.p2.y)));
     bool endpoint = (point == seg.p1) || (point == seg.p2);
     return on || endpoint;
 }
@@ -171,5 +171,5 @@ Segment rotate_segment(const Segment& seg, double angle) {
     Vector p2 = seg.p2 - seg.p1;
     p2.rotate(angle);
     p2 += p1;
-    return (Segment){p1, p2};
+    return (Segment) {p1, p2};
 }

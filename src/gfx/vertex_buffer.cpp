@@ -1,6 +1,5 @@
 #include <GL/glew.h>
 #include "vertex_buffer.hpp"
-#include "renderer.hpp"
 
 VertexBuffer::VertexBuffer(const void* data, size_t size) {
     glGenBuffers(1, &this->id);

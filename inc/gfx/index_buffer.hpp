@@ -3,6 +3,12 @@
 
 #include <cstdlib>
 
+/*
+ * Contains the data indicating the
+ * how the vertices currently bound to
+ * OpenGL are connected (i.e., the
+ * triangulation)
+ */
 class IndexBuffer {
 public:
     unsigned int id;

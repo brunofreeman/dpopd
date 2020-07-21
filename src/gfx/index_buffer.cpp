@@ -3,8 +3,9 @@
 #include "renderer.hpp"
 
 IndexBuffer::IndexBuffer(const void* data, size_t count) : count(count) {
-    glGenBuffers(1, &this->id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
+    glGenBuffers(1, &this->id); // assigned the ID
+    this->bind();
+    // binds the index data
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->count * sizeof(unsigned int), data, GL_STATIC_DRAW);
 }
 

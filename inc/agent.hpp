@@ -13,7 +13,7 @@ enum MoveModelType {
 
 struct Waypoint {
     Vector position;
-    float radius {0.0f};
+    float radius{0.0f};
 };
 
 class Agent {
@@ -55,8 +55,11 @@ public:
     void refresh_immediate_goal(const std::vector<Wall*>& walls);
 
     [[nodiscard]] Vector sfm_driving_force(const Vector& position_target) const;
+
     [[nodiscard]] Vector sfm_agent_interaction_force(const std::vector<Agent*>& agents) const;
+
     [[nodiscard]] Vector sfm_wall_interaction_force(const std::vector<Wall*>& walls) const;
+
     void sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time);
 };
 
