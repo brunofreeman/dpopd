@@ -5,6 +5,7 @@
 #include <vector>
 #include "wall.hpp"
 #include "vector.hpp"
+#include "segment.hpp"
 #include "polygon.hpp"
 
 enum MoveModelType {

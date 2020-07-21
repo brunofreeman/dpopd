@@ -1,12 +1,9 @@
 #ifndef __VECTOR_HPP__
 #define __VECTOR_HPP__
 
-enum Orientation {
-    COUNTERCLOCKWISE = -1,
-    COLINEAR = 0,
-    CLOCKWISE = 1
-};
-
+/*
+ * A vector in 2D space
+ */
 class Vector {
 public:
     double x;
@@ -28,16 +25,15 @@ public:
 
     void normalize();
 
+    // rotates about the origin
     void rotate(double angle);
 
+    /*
+     * Moves the head of the vector towards the
+     * head of the other vector by the specified
+     * distance
+     */
     void towards(const Vector& other, double distance);
-
-    void away(const Vector& other, double distance);
-};
-
-struct Segment {
-    Vector p1;
-    Vector p2;
 };
 
 void operator+=(Vector& vec, const Vector& vec_const);
@@ -62,23 +58,5 @@ double dot(const Vector& vec1, const Vector& vec2);
 
 // returns the smallest angle between the vectors
 double angle(const Vector& vec1, const Vector& vec2);
-
-bool below_or_on_line(const Vector& point, const Segment& seg);
-
-// for colinear points
-bool on_segment(const Vector& point, const Segment& seg);
-
-Orientation orientation(const Vector& p, const Vector& q, const Vector& r);
-
-bool check_intersect(const Segment& seg1, const Segment& seg2);
-
-bool check_intersect_no_endpoints(const Segment& seg1, const Segment& seg2);
-
-double length(const Segment&);
-
-double distance(const Vector& point, const Segment& seg);
-
-// rotates around p1
-Segment rotate_segment(const Segment& seg, double angle);
 
 #endif // #ifndef __VECTOR_HPP__

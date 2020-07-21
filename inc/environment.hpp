@@ -5,6 +5,12 @@
 #include <vector>
 #include "polygon.hpp"
 
+/*
+ * Defines the environment that agents will
+ * navigate. Consists of a non-self-intersecting
+ * polygon that serves as the border and 0 or more
+ * holes.
+ */
 class Environment {
 public:
     Polygon* border;
@@ -19,6 +25,7 @@ public:
 
     bool is_interior_point(const Vector& point, double radius) const;
 
+    // the point must be at least radius units away from all edges
     Vector random_interior_point(double radius) const;
 
     Vector random_interior_point() const;

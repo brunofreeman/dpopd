@@ -5,6 +5,11 @@
 #include "agent.hpp"
 #include "wall.hpp"
 
+/*
+ * Tracks a crowd of agents as well as walls that define
+ * the environment. Currently, the Social Force Model is
+ * the only implemented functionality.
+ */
 class MoveModel {
 public:
     std::vector<Agent*> crowd;

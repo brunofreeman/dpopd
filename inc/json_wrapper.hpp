@@ -9,6 +9,7 @@
 #define JSON_ID_OBSTACLES "obstacles"
 #define JSON_ID_SCALE "scale"
 
+// constructs an Environment object from its JSON definition
 Environment* json_environment(const std::string& filename);
 
 #endif // #ifndef __JSON_WRAPPER_HPP__

@@ -3,8 +3,7 @@
 --Optimization--
 
 --Code Improvement--
-TODO: refactor external SFM code
-TODO: comments/documentation!
+TODO: refactor/add comments to agent/wall.cpp/hpp
 TODO: public/private in classes
 TODO: unnecessary functions in headers
 
