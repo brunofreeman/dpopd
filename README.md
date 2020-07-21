@@ -1,22 +1,19 @@
-# dpo_pdf
-Discrete Pedestrian Occupancy Probability Distribution Function
+# Generation of Discrete Pedestrian Occupancy Probability Distributions
+This is the codebase for a [Caltech SURF](http://sfp.caltech.edu/programs/surf) research project.
+The project aims to produce a predictive model that can forecast the likelihood that a
+discretized cell in an environment will be occupied by at least one pedestrian at a future time
+step.
 
-Dependencies:
-
-https://github.com/nlohmann/json (reading in environment and model definitions)
-
-https://www.glfw.org/ (creating cross-platform windows)
-
-http://glew.sourceforge.net/ (accessing OpenGL graphics functions from GPU)
-
-https://github.com/mapbox/earcut.hpp (polygon triangulation)
-
-https://github.com/brunofreeman/dijkstra_polygon (shortest polygon path generation)
-
-Incorporations:
-
-https://github.com/fawwazbmn/SocialForceModel (basis for SFM implementation)
-
-Thank you to these learning resources:
-
-https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2 (The Cherno's OpenGL series)
+## Dependencies/Incorporations
+* Agent Navigation
+  - [brunofreeman/dijkstra_polygon](https://github.com/brunofreeman/dijkstra_polygon): finds shortest polyline between points in environment
+  - [fawwazbmn/SocialForceModel](https://github.com/fawwazbmn/SocialForceModel): basis for SFM implementation
+    * Note: code significantly altered and incorporated directly into this repository
+* Graphics
+  - [GLFW](https://www.glfw.org/): creates application window
+  - [GLEW](http://glew.sourceforge.net/): accesses OpenGL functions
+  - [mapbox/earcut.hpp](https://github.com/mapbox/earcut.hpp): triangulates polygons
+  - [The Cherno](https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2): provided basis for graphics abstraction
+    * Note: not a publically-available versioned code repository, rather a tutorial series on which much of this project's graphics abstraction is based
+* Other
+  - [nlohmann/json](https://github.com/nlohmann/json): reads environment definitions from JSON files
