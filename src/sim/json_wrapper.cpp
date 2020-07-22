@@ -1,7 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include "json_wrapper.hpp"
+#include "sim/json_wrapper.hpp"
 
 nlohmann::json open_json(std::string filepath) {
     std::ifstream in(filepath);

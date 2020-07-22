@@ -3,9 +3,9 @@
 
 #include "graphics_object.hpp"
 #include "shader.hpp"
-#include "environment.hpp"
+#include "sim/environment.hpp"
 #include "color.hpp"
-#include "agent.hpp"
+#include "sim/agent.hpp"
 
 /*
  * The main layer of abstraction that

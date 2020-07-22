@@ -12,13 +12,17 @@ set(TARGET visualizer)
 set(INC_DIR inc)
 set(SRC_DIR src)
 set(GFX_DIR gfx)
+set(SIM_DIR sim)
 
 set(SRC_EXT .cpp)
 set(INC_EXT .hpp)
 
-list(APPEND FILES color graphics_object graphics_util index_buffer renderer shader vertex_array vertex_buffer vertex_buffer_layout)
-list(TRANSFORM FILES PREPEND ${GFX_DIR}/)
-list(APPEND FILES agent environment json_wrapper move_model polygon random_wrapper segment to_string vector wall)
+list(APPEND GFX_FILES color graphics_object graphics_util index_buffer renderer shader vertex_array vertex_buffer vertex_buffer_layout)
+list(TRANSFORM GFX_FILES PREPEND ${GFX_DIR}/)
+list(APPEND SIM_FILES agent environment json_wrapper move_model polygon random_wrapper segment to_string vector wall)
+list(TRANSFORM SIM_FILES PREPEND ${SIM_DIR}/)
+
+list(APPEND FILES ${GFX_FILES} ${SIM_FILES})
 
 set(INC ${FILES})
 list(TRANSFORM INC PREPEND ${INC_DIR}/)
@@ -28,7 +32,7 @@ set(SRC ${FILES})
 list(TRANSFORM SRC PREPEND ${SRC_DIR}/)
 list(TRANSFORM SRC APPEND  ${SRC_EXT})
 
-add_executable(${TARGET} ${SRC_DIR}/${TARGET}${SRC_EXT} ${INC} ${SRC})
+add_executable(${TARGET} ${SRC_DIR}/${SIM_DIR}/${TARGET}${SRC_EXT} ${INC} ${SRC})
 
 set(LIB_INC_DIR /usr/local/include)
 set(LIB_DIR /usr/local/lib)

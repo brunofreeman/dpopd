@@ -1,12 +1,12 @@
 #include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "json_wrapper.hpp"
+#include "sim/json_wrapper.hpp"
 #include "graphics_util.hpp"
 #include "renderer.hpp"
 #include "shader.hpp"
-#include "move_model.hpp"
-#include "random_wrapper.hpp"
+#include "sim/move_model.hpp"
+#include "sim/random_wrapper.hpp"
 #include <bfreeman/dijkstra_polygon.hpp>
 
 Environment* environment;

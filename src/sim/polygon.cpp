@@ -1,6 +1,6 @@
 #include <cmath>
-#include "polygon.hpp"
-#include "segment.hpp"
+#include "sim/polygon.hpp"
+#include "sim/segment.hpp"
 
 bool Polygon::is_interior_point(const Vector& point, double radius) const {
     double max_x = 0;
