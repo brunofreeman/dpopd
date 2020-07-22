@@ -1,12 +1,12 @@
 #include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "sim/json_wrapper.hpp"
+#include "json_wrapper.hpp"
 #include "graphics_util.hpp"
 #include "renderer.hpp"
 #include "shader.hpp"
-#include "sim/move_model.hpp"
-#include "sim/random_wrapper.hpp"
+#include "move_model.hpp"
+#include "random_wrapper.hpp"
 #include <bfreeman/dijkstra_polygon.hpp>
 
 Environment* environment;
@@ -22,7 +22,7 @@ Color agent_stationary_color(GREEN_RGB);
 
 MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
-size_t num_agents = 100;
+size_t num_agents = 20;
 
 // radii given by external repo
 float agent_radius = 0.2f;
@@ -34,7 +34,7 @@ char glfw_version_minor = 1;
 short screen_width = 640;
 short screen_height = 480;
 
-char environment_name[] = "irregular_2";
+char environment_name[] = "square";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
