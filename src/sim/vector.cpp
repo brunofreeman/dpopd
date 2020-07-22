@@ -1,5 +1,5 @@
 #include <cmath>
-#include "sim/vector.hpp"
+#include "vector.hpp"
 
 #define sq(a) (a)*(a)
 #define DBL_EPSILON 10e-7

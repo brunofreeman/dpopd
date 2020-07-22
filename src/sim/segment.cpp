@@ -1,4 +1,4 @@
-#include "sim/segment.hpp"
+#include "segment.hpp"
 #include <cmath>
 
 #define sq(a) (a)*(a)

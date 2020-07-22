@@ -1,5 +1,5 @@
 #include <cmath>
-#include "sim/agent.hpp"
+#include "agent.hpp"
 #include "random_wrapper.hpp"
 
 size_t Agent::crowd_size = 0;

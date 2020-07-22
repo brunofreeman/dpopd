@@ -1,0 +1,7 @@
+{
+  "environment"  : "square",
+  "crowd_type"   : "milling",
+  "spacial_res"  : 0.2,
+  "temporal_res" : 0.5,
+  "lstm_params"  : {}
+}

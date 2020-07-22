@@ -1,5 +1,5 @@
 #include <utility>
-#include "sim/environment.hpp"
+#include "environment.hpp"
 
 Environment::Environment(Polygon* border, std::vector<Polygon*> obstacles) :
         border(border), obstacles(std::move(obstacles)) {

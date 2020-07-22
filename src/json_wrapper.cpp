@@ -1,7 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include "sim/json_wrapper.hpp"
+#include "json_wrapper.hpp"
 
 nlohmann::json open_json(std::string filepath) {
     std::ifstream in(filepath);
@@ -24,11 +24,11 @@ Polygon* json_polygon(nlohmann::json json_polygon) {
 Environment* json_environment(const std::string& filename) {
     nlohmann::json json_env = open_json(ENV_PATH + filename + ".json");
 
-    Polygon* border = json_polygon(json_env[JSON_ID_BORDER]);
+    Polygon* border = json_polygon(json_env[ENV_ID_BORDER]);
 
-    std::vector<Polygon*> obstacles(json_env[JSON_ID_OBSTACLES].size());
+    std::vector<Polygon*> obstacles(json_env[ENV_ID_OBSTACLES].size());
     for (size_t i = 0; i < obstacles.size(); i++) {
-        Polygon* obstacle = json_polygon(json_env[JSON_ID_OBSTACLES][i]);
+        Polygon* obstacle = json_polygon(json_env[ENV_ID_OBSTACLES][i]);
         obstacles[i] = obstacle;
     }
 
@@ -42,7 +42,7 @@ Environment* json_environment(const std::string& filename) {
         if (y < min_y) min_y = y;
     }
 
-    double scale = json_env[JSON_ID_SCALE];
+    double scale = json_env[ENV_ID_SCALE];
 
     auto norm_and_scale = [](Vector& vec, double min_x, double min_y, double scale) {
         vec.x -= min_x;
@@ -62,4 +62,15 @@ Environment* json_environment(const std::string& filename) {
     }
 
     return new Environment(border, obstacles);
+}
+
+Model* json_model(const std::string& filename) {
+    nlohmann::json json_mdl = open_json(MDL_PATH + filename + ".json");
+
+    std::string envir_name = json_mdl[MDL_ID_ENVIRONMENT];
+    std::string crowd_type = json_mdl[MDL_ID_CROWD_TYPE];
+    double spacial_res = json_mdl[MDL_ID_SPACIAL_RES];
+    double temporal_res = json_mdl[MDL_ID_TEMPORAL_RES];
+
+    return new Model(envir_name, crowd_type, spacial_res, temporal_res);
 }

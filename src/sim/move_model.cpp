@@ -1,4 +1,4 @@
-#include "sim/move_model.hpp"
+#include "move_model.hpp"
 
 MoveModel::~MoveModel() {
     this->delete_crowd();

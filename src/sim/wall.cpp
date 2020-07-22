@@ -1,4 +1,4 @@
-#include "sim/wall.hpp"
+#include "wall.hpp"
 
 Vector Wall::nearest_point(Vector position_i) {
     Vector rel_end, rel_pos, rel_end_scale, rel_pos_scale;

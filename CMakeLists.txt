@@ -21,9 +21,9 @@ set(INC_EXT .hpp)
 
 list(APPEND GFX_FILES color graphics_object graphics_util index_buffer renderer shader vertex_array vertex_buffer vertex_buffer_layout)
 list(TRANSFORM GFX_FILES PREPEND ${GFX_DIR}/)
-list(APPEND SIM_FILES agent environment json_wrapper move_model polygon segment to_string vector wall)
+list(APPEND SIM_FILES agent environment move_model polygon segment to_string vector wall)
 list(TRANSFORM SIM_FILES PREPEND ${SIM_DIR}/)
-list(APPEND GLOB_FILES random_wrapper)
+list(APPEND GLOB_FILES random_wrapper json_wrapper)
 
 list(APPEND FILES ${GFX_FILES} ${SIM_FILES} ${GLOB_FILES})
 
@@ -35,11 +35,11 @@ set(VIS_SRC ${FILES})
 list(TRANSFORM VIS_SRC PREPEND ${SRC_DIR}/)
 list(TRANSFORM VIS_SRC APPEND  ${SRC_EXT})
 
-set(GEN_INC random_wrapper)
+set(GEN_INC ${GLOB_FILES} ${SIM_FILES})
 list(TRANSFORM GEN_INC PREPEND ${INC_DIR}/)
 list(TRANSFORM GEN_INC APPEND  ${INC_EXT})
 
-set(GEN_SRC random_wrapper)
+set(GEN_SRC ${GLOB_FILES} ${SIM_FILES})
 list(TRANSFORM GEN_SRC PREPEND ${SRC_DIR}/)
 list(TRANSFORM GEN_SRC APPEND  ${SRC_EXT})
 
@@ -53,7 +53,7 @@ set(LIB_EXT .dylib)
 list(APPEND LIB_PATHS GLEW glfw dijkstrapolygon)
 list(TRANSFORM LIB_PATHS PREPEND ${LIB_DIR}/lib)
 list(TRANSFORM LIB_PATHS APPEND ${LIB_EXT})
-target_include_directories(${VIS_TARGET} PRIVATE ${INC_DIR} ${INC_DIR}/${GFX_DIR} ${INC_DIR}/${SIM_DIR} ${LIB_INC_DIR})
+target_include_directories(${VIS_TARGET} PRIVATE ${INC_DIR} ${INC_DIR}/${GFX_DIR} ${INC_DIR}/${SIM_DIR} ${INC_DIR}/${NET_DIR} ${LIB_INC_DIR})
 target_link_libraries(${VIS_TARGET} ${LIB_PATHS})
 
-target_include_directories(${GEN_TARGET} PRIVATE ${INC_DIR} ${INC_DIR}/${NET_DIR})
+target_include_directories(${GEN_TARGET} PRIVATE ${INC_DIR} ${INC_DIR}/${GFX_DIR} ${INC_DIR}/${SIM_DIR} ${INC_DIR}/${NET_DIR} ${LIB_INC_DIR})
