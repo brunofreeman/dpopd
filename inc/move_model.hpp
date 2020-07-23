@@ -36,6 +36,8 @@ public:
 
     ~MoveModel();
 
+    bool pathing();
+
     void create_agents(size_t num_agents);
     void set_agent_waypoints(Agent* agent, const Vector& goal) const;
     void populate_dijkstra_polygon();
@@ -52,8 +54,8 @@ public:
 
     void delete_walls();
 
-    void move_crowd(float step_time);
-    void sfm_move_crowd(float step_time);
+    void move_crowd(double step_time);
+    void sfm_move_crowd(double step_time);
 };
 
 #endif // #ifndef __MOVE_MODEL_HPP__

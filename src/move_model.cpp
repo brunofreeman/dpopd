@@ -19,6 +19,13 @@ MoveModel::~MoveModel() {
     delete this->environment;
 }
 
+bool MoveModel::pathing() {
+    for (auto& agent : this->crowd) {
+        if (agent->is_pathing) return true;
+    }
+    return false;
+}
+
 void MoveModel::add_agent(Agent* agent) {
     this->crowd.push_back(agent);
 }
@@ -50,7 +57,7 @@ void MoveModel::delete_walls() {
     this->walls.clear();
 }
 
-void MoveModel::move_crowd(float step_time) {
+void MoveModel::move_crowd(double step_time) {
     switch (this->type) {
         case SOCIAL_FORCE_MODEL:
             this->sfm_move_crowd(step_time);
@@ -58,7 +65,7 @@ void MoveModel::move_crowd(float step_time) {
     }
 }
 
-void MoveModel::sfm_move_crowd(float step_time) {
+void MoveModel::sfm_move_crowd(double step_time) {
     for (auto& agent : this->crowd) {
         agent->sfm_move(this->crowd, this->walls, step_time);
     }

@@ -71,6 +71,8 @@ Model* json_model(const std::string& filename) {
     std::string crowd_type = json_mdl[MDL_ID_CROWD_TYPE];
     double spacial_res = json_mdl[MDL_ID_SPACIAL_RES];
     double temporal_res = json_mdl[MDL_ID_TEMPORAL_RES];
+    double updates_res = json_mdl[MDL_ID_UPDATE_RES];
+    unsigned int updates_per_frame = json_mdl[MDL_ID_UPDATES_PER_FRAME];
 
-    return new Model(envir_name, crowd_type, spacial_res, temporal_res);
+    return new Model(envir_name, crowd_type, spacial_res, temporal_res, updates_res, updates_per_frame);
 }
