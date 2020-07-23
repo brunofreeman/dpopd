@@ -59,4 +59,6 @@ double dot(const Vector& vec1, const Vector& vec2);
 // returns the smallest angle between the vectors
 double angle(const Vector& vec1, const Vector& vec2);
 
+double distance(const Vector& vec1, const Vector& vec2);
+
 #endif // #ifndef __VECTOR_HPP__

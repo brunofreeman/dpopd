@@ -91,3 +91,10 @@ double angle(const Vector& vec1, const Vector& vec2) {
     double z = abs(vec1.x * vec2.y - vec1.y * vec2.x);
     return abs(atan2(z, dot(vec1, vec2)));
 }
+
+double distance(const Vector& vec1, const Vector& vec2) {
+    return sqrt(
+            sq(vec1.x - vec2.x) +
+            sq(vec1.y - vec2.y)
+    );
+}

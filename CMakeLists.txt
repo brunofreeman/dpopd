@@ -23,11 +23,11 @@ list(APPEND GFX_FILES color graphics_object graphics_util index_buffer renderer 
 list(TRANSFORM GFX_FILES PREPEND ${GFX_DIR}/)
 list(APPEND SIM_FILES agent environment polygon segment to_string vector wall)
 list(TRANSFORM SIM_FILES PREPEND ${SIM_DIR}/)
-list(APPEND NET_FILES model)
+list(APPEND NET_FILES model occupancy_grid)
 list(TRANSFORM NET_FILES PREPEND ${NET_DIR}/)
 list(APPEND GLOB_FILES random_wrapper json_wrapper move_model)
 
-list(APPEND FILES ${GFX_FILES} ${SIM_FILES} ${NET} ${GLOB_FILES})
+list(APPEND FILES ${GFX_FILES} ${SIM_FILES} ${NET_FILES} ${GLOB_FILES})
 
 set(VIS_INC ${FILES})
 list(TRANSFORM VIS_INC PREPEND ${INC_DIR}/)
