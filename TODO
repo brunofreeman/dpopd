@@ -6,6 +6,7 @@
 TODO: refactor/add comments to agent/wall.cpp/hpp
 TODO: public/private in classes
 TODO: unnecessary functions in headers
+TODO: clean up MoveModel code
 
 --Features--
 TODO: option for adding agents based on unscaled, non-normalized coords

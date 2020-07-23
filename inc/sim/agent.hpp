@@ -8,13 +8,9 @@
 #include "segment.hpp"
 #include "polygon.hpp"
 
-enum MoveModelType {
-    SOCIAL_FORCE_MODEL = 0
-};
-
 struct Waypoint {
     Vector position;
-    float radius{0.0f};
+    double radius{0.0f};
 };
 
 class Agent {
@@ -34,20 +30,20 @@ public:
     Polygon* shape;
 
     size_t id;
-    float radius;
-    float desired_speed;
+    double radius;
+    double desired_speed;
 
     Vector position;
     std::deque<Waypoint> path;
     Vector velocity;
 
-    explicit Agent(const MoveModelType& move_model_type, float radius);
+    Agent(double radius);
 
     ~Agent();
 
     void update_shape();
 
-    void push_waypoint(float x, float y, float waypoint_radius);
+    void push_waypoint(double x, double y, double waypoint_radius);
 
     [[nodiscard]] bool clear_path_to(const Vector& to, const std::vector<Wall*>& walls) const;
 
@@ -61,7 +57,7 @@ public:
 
     [[nodiscard]] Vector sfm_wall_interaction_force(const std::vector<Wall*>& walls) const;
 
-    void sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time);
+    void sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, double step_time);
 };
 
 #endif // #ifndef __AGENT_HPP__

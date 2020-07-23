@@ -14,8 +14,6 @@ GraphicsObject* ego;
 float padding = 0.05f;
 Color environment_color(SILVER_RGB);
 
-std::vector<std::vector<bfreeman::Point>> dijkstra_polygon;
-
 GraphicsObject** agos;
 Color agent_pathing_color(ORANGE_RGB);
 Color agent_stationary_color(GREEN_RGB);
@@ -24,9 +22,9 @@ MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
 size_t num_agents = 20;
 
-// radii given by external repo
-float agent_radius = 0.2f;
-float waypoint_radius = 3.0f;
+// radii given by Moussaid et al., 2009
+double agent_radius = 0.2f;
+double waypoint_radius = 3.0f;
 
 char glfw_version_major = 4;
 char glfw_version_minor = 1;
@@ -75,61 +73,6 @@ static GLFWwindow* glfw_window_init(const std::string& window_name, int width, i
     return window;
 }
 
-static void add_polygon_walls(const Polygon* polygon) {
-    size_t curr_idx = 0;
-    do {
-        size_t next_idx = (curr_idx + 1) % polygon->vertices.size();
-        move_model->add_wall(new Wall(polygon->vertices[curr_idx], polygon->vertices[next_idx]));
-        curr_idx = next_idx;
-    } while (curr_idx != 0);
-}
-
-static void create_walls() {
-    add_polygon_walls(environment->border);
-    for (auto& obstacle : environment->obstacles) {
-        add_polygon_walls(obstacle);
-    }
-}
-
-static bfreeman::Point vec_to_point(const Vector& vec) {
-    return (bfreeman::Point) {vec.x, vec.y};
-}
-
-static void populate_dijkstra_polygon() {
-    dijkstra_polygon = std::vector<std::vector<bfreeman::Point>>(environment->obstacles.size() + 1);
-    size_t dijkstra_polygon_idx = 0;
-    for (auto& vertex : environment->border->vertices) {
-        dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));
-    }
-    for (auto& obstacle : environment->obstacles) {
-        dijkstra_polygon_idx++;
-        for (auto& vertex : obstacle->vertices) {
-            dijkstra_polygon[dijkstra_polygon_idx].push_back(vec_to_point(vertex));
-        }
-    }
-}
-
-static void set_agent_waypoints(Agent* agent, const Vector& goal) {
-    bfreeman::DijkstraData dd = bfreeman::dijkstra_path(dijkstra_polygon, vec_to_point(agent->position),
-                                                        vec_to_point(goal));
-    agent->path.clear();
-    for (size_t i = 1; i < dd.path.size(); i++) {
-        agent->push_waypoint(dd.path[i].x, dd.path[i].y, waypoint_radius);
-    }
-}
-
-static void create_agents() {
-    Agent* agent;
-    for (size_t i = 0; i < num_agents; i++) {
-        agent = new Agent(move_model_type, agent_radius);
-        agent->position = environment->random_interior_point(agent->radius);
-        set_agent_waypoints(agent, environment->random_interior_point(agent->radius));
-        agent->update_corner_direction();
-        agent->update_shape();
-        move_model->add_agent(agent);
-    }
-}
-
 static int show_visualization() {
     GLFWwindow* window = glfw_window_init(window_name, screen_width, screen_height);
     if (!window) return -1;
@@ -139,12 +82,10 @@ static int show_visualization() {
     Shader shader(shader_path);
 
     environment = json_environment(environment_name);
-    populate_dijkstra_polygon();
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
-    move_model = new MoveModel();
-    create_walls();
-    create_agents();
+    move_model = new MoveModel(SOCIAL_FORCE_MODEL, RANDOM, environment,
+            num_agents, agent_radius, waypoint_radius);
 
     agos = new GraphicsObject* [move_model->crowd.size()];
     for (size_t i = 0; i < move_model->crowd.size(); i++) {
@@ -158,11 +99,7 @@ static int show_visualization() {
         std::chrono::duration<double> elapsed_seconds = curr_time - prev_time;
         prev_time = curr_time;
 
-        switch (move_model_type) {
-            case SOCIAL_FORCE_MODEL:
-                move_model->sfm_move_crowd(elapsed_seconds.count());
-                break;
-        }
+        move_model->move_crowd(elapsed_seconds.count());
 
         clear();
 
@@ -176,7 +113,7 @@ static int show_visualization() {
             refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
             if (move_model->crowd[i]->needs_repathing) {
-                set_agent_waypoints(move_model->crowd[i], move_model->crowd[i]->path.back().position);
+                move_model->set_agent_waypoints(move_model->crowd[i], move_model->crowd[i]->path.back().position);
                 move_model->crowd[i]->needs_repathing = false;
             }
         }
@@ -187,8 +124,8 @@ static int show_visualization() {
 
     glfwTerminate();
 
-    delete environment;
     delete move_model;
+    delete ego;
     delete[] agos;
 
     return 0;

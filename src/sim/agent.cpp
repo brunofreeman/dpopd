@@ -4,19 +4,15 @@
 
 size_t Agent::crowd_size = 0;
 
-Agent::Agent(const MoveModelType& move_model_type, const float radius) : radius(radius), is_pathing(true),
+
+Agent::Agent(const double radius) : radius(radius), is_pathing(true),
                                                                          at_corner(false), shape(nullptr),
                                                                          corner_direction(CLOCKWISE),
                                                                          needs_repathing(false), ticks(0) {
 
     this->id = Agent::crowd_size++;
+    this->desired_speed = from_normal_distribution(1.29, 0.19);
 
-    switch (move_model_type) {
-        case SOCIAL_FORCE_MODEL:
-            // (Moussaid et al., 2009)
-            this->desired_speed = from_normal_distribution(1.29, 0.19);
-            break;
-    }
 }
 
 Agent::~Agent() {
@@ -37,7 +33,7 @@ void Agent::update_shape() {
     this->prev_update_pos = this->position;
 }
 
-void Agent::push_waypoint(const float x, const float y, const float waypoint_radius) {
+void Agent::push_waypoint(const double x, const double y, const double waypoint_radius) {
     this->path.push_back((Waypoint) {Vector(x, y), waypoint_radius});
 }
 
@@ -114,7 +110,7 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
 }
 
 // osc.: 23
-void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, float step_time) {
+void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, double step_time) {
     this->refresh_immediate_goal(walls);
     Vector acceleration = this->sfm_driving_force(this->immediate_goal) +
                           this->sfm_agent_interaction_force(agents) +
@@ -142,7 +138,7 @@ void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>
 }
 
 Vector Agent::sfm_driving_force(const Vector& position_target) const {
-    const float T = 0.54f;    // Relaxation time based on (Moussaid et al., 2009)
+    const double T = 0.54f;    // Relaxation time based on (Moussaid et al., 2009)
     Vector e_i, f_i;
 
     // Compute Desired Direction
@@ -159,14 +155,14 @@ Vector Agent::sfm_driving_force(const Vector& position_target) const {
 
 Vector Agent::sfm_agent_interaction_force(const std::vector<Agent*>& agents) const {
     // Constant Values Based on (Moussaid et al., 2009)
-    const float lambda = 2.0;    // Weight reflecting relative importance of velocity vector against position vector
-    const float gamma = 0.35f;    // Speed interaction
-    const float n_prime = 3.0;    // Angular interaction
-    const float n = 2.0;        // Angular intaraction
-    const float A = 4.5;        // Modal parameter A
+    const double lambda = 2.0;    // Weight reflecting relative importance of velocity vector against position vector
+    const double gamma = 0.35f;    // Speed interaction
+    const double n_prime = 3.0;    // Angular interaction
+    const double n = 2.0;        // Angular intaraction
+    const double A = 4.5;        // Modal parameter A
 
     Vector distance_ij, e_ij, D_ij, t_ij, n_ij, f_ij;
-    float B, theta, f_v, f_theta;
+    double B, theta, f_v, f_theta;
     int K;
 
     for (const Agent* agent_j : agents) {
@@ -224,13 +220,13 @@ Vector Agent::sfm_agent_interaction_force(const std::vector<Agent*>& agents) con
 }
 
 Vector Agent::sfm_wall_interaction_force(const std::vector<Wall*>& walls) const {
-    //const float repulsionRange = 0.3f;	// Repulsion range based on (Moussaid et al., 2009)
+    //const double repulsionRange = 0.3f;	// Repulsion range based on (Moussaid et al., 2009)
     const int a = 3;
-    const float b = 0.1f;
+    const double b = 0.1f;
 
     Vector nearest_point;
     Vector vector_wi, minVector_wi;
-    float square_dist, square_dist_min = INFINITY, d_w, f_iw;
+    double square_dist, square_dist_min = INFINITY, d_w, f_iw;
 
     for (Wall* wall : walls) {
         nearest_point = wall->nearest_point(this->position);
