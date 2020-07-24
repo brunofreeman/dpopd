@@ -22,7 +22,7 @@ enum MoveModelType {
  */
 class MoveModel {
 public:
-    std::vector<Agent*> crowd;
+    std::vector<Agent*> agents;
     std::vector<Wall*> walls;
     std::vector<std::vector<bfreeman::Point>> dijkstra_polygon;
     MoveModelType type;

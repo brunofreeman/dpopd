@@ -48,7 +48,7 @@ static void glfw_window_resize_callback(GLFWwindow* window, int new_screen_width
     screen_width = new_screen_width;
     screen_height = new_screen_height;
     refresh_environment_positions(ego, environment, screen_width, screen_height, padding);
-    for (size_t i = 0; i < move_model->crowd.size(); i++) {
+    for (size_t i = 0; i < move_model->agents.size(); i++) {
         refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
     }
 }
@@ -87,9 +87,9 @@ static int show_visualization() {
     move_model = new MoveModel(SOCIAL_FORCE_MODEL, RANDOM, environment,
             num_agents, agent_radius, waypoint_radius);
 
-    agos = new GraphicsObject* [move_model->crowd.size()];
-    for (size_t i = 0; i < move_model->crowd.size(); i++) {
-        agos[i] = agent_graphics_object(move_model->crowd[i], environment, screen_width, screen_height, padding);
+    agos = new GraphicsObject* [move_model->agents.size()];
+    for (size_t i = 0; i < move_model->agents.size(); i++) {
+        agos[i] = agent_graphics_object(move_model->agents[i], environment, screen_width, screen_height, padding);
     }
 
     auto prev_time = std::chrono::system_clock::now();
@@ -106,15 +106,15 @@ static int show_visualization() {
         set_color(shader, environment_color);
         draw(ego, shader);
 
-        for (size_t i = 0; i < move_model->crowd.size(); i++) {
-            move_model->crowd[i]->update_shape();
-            if (move_model->crowd[i]->is_pathing) set_color(shader, agent_pathing_color);
+        for (size_t i = 0; i < move_model->agents.size(); i++) {
+            move_model->agents[i]->update_shape();
+            if (move_model->agents[i]->is_pathing) set_color(shader, agent_pathing_color);
             else set_color(shader, agent_stationary_color);
             refresh_polygon_positions(agos[i], environment, screen_width, screen_height, padding);
             draw(agos[i], shader);
-            if (move_model->crowd[i]->needs_repathing) {
-                move_model->set_agent_waypoints(move_model->crowd[i], move_model->crowd[i]->path.back().position);
-                move_model->crowd[i]->needs_repathing = false;
+            if (move_model->agents[i]->needs_repathing) {
+                move_model->set_agent_waypoints(move_model->agents[i], move_model->agents[i]->path.back().position);
+                move_model->agents[i]->needs_repathing = false;
             }
         }
 

@@ -1,12 +1,31 @@
 #include "occupancy_grid.hpp"
+#include <iostream>
 
 OccupancyGrid::OccupancyGrid(Model* model, Environment *environment) {
+    this->cell_size = model->spacial_res;
 
+    double max_x = environment->border->vertices[0].x;
+    double max_y = environment->border->vertices[0].y;
+
+    for (size_t i = 1; i < environment->border->vertices.size(); i++) {
+        double x = environment->border->vertices[i].x;
+        double y = environment->border->vertices[i].y;
+        if (x > max_x) max_x = x;
+        if (y > max_y) max_y = y;
+    }
+
+    size_t rows = (max_y / this->cell_size) + 1;
+    size_t cols = (max_x / this->cell_size) + 1;
+
+    this->grid = std::vector<std::vector<bool>>(rows);
+    for (auto& row : this->grid) {
+        row = std::vector<bool>(cols);
+    }
 }
 
 void OccupancyGrid::clear() {
-    for (auto& col : this->grid) {
-        for (auto&& cell : col) {
+    for (auto& row : this->grid) {
+        for (auto&& cell : row) {
             cell = false;
         }
     }
@@ -69,7 +88,7 @@ void OccupancyGrid::occupy(const Vector& position, const double radius) {
         }
 
         // check above skewed
-        for (size_t j = 0; j < i; i++) {
+        for (size_t j = 0; j < i; j++) {
             Vector  above_left((col - i + j + 1) * this->cell_size,(row + 1 + i) * this->cell_size);
             Vector above_right((col + i - j) * this->cell_size,    (row + 1 + i) * this->cell_size);
             if (distance(position, above_left) <= radius) {
@@ -80,7 +99,7 @@ void OccupancyGrid::occupy(const Vector& position, const double radius) {
             }
         }
         // check below skewed
-        for (size_t j = 0; j < i; i++) {
+        for (size_t j = 0; j < i; j++) {
             Vector  below_left((col - i + j + 1) * this->cell_size,(row - i) * this->cell_size);
             Vector below_right((col + i - j) * this->cell_size,    (row - i) * this->cell_size);
             if (distance(position, below_left) <= radius) {
@@ -91,7 +110,7 @@ void OccupancyGrid::occupy(const Vector& position, const double radius) {
             }
         }
         // check left skewed
-        for (size_t j = 0; j < i; i++) {
+        for (size_t j = 0; j < i; j++) {
             Vector left_above((col - i) * this->cell_size,(row + i - j) * this->cell_size);
             Vector left_below((col - i) * this->cell_size,(row - i + 1 + j) * this->cell_size);
             if (distance(position, left_above) <= radius) {
@@ -102,7 +121,7 @@ void OccupancyGrid::occupy(const Vector& position, const double radius) {
             }
         }
         // check right skewed
-        for (size_t j = 0; j < i; i++) {
+        for (size_t j = 0; j < i; j++) {
             Vector right_above((col + 1 + i) * this->cell_size,(row + i - j) * this->cell_size);
             Vector right_below((col + 1 + i) * this->cell_size,(row - i + 1 + j) * this->cell_size);
             if (distance(position, right_above) <= radius) {
@@ -124,4 +143,27 @@ void OccupancyGrid::occupy(const std::vector<Agent*>& agents) {
 void OccupancyGrid::clear_and_occupy(const std::vector<Agent*>& agents) {
     this->clear();
     this->occupy(agents);
+}
+
+void OccupancyGrid::print(const bool show_grid_border) {
+    if (show_grid_border) {
+        for (size_t i = 0; i < this->grid[0].size() + 2; i++) {
+            std::cout << '_';
+        }
+        std::cout << std::endl;
+    }
+    for (auto& row : this->grid) {
+        if (show_grid_border) std::cout << '|';
+        for (auto&& cell : row) {
+            std::cout << (cell ? OccupancyGrid::occupied_cell_char : OccupancyGrid::empty_cell_char);
+        }
+        if (show_grid_border) std::cout << '|';
+        std::cout << std::endl;
+    }
+    if (show_grid_border) {
+        for (size_t i = 0; i < this->grid[0].size() + 2; i++) {
+            std::cout << "_";
+        }
+        std::cout << std::endl;
+    }
 }

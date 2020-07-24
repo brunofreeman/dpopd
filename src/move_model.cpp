@@ -20,14 +20,14 @@ MoveModel::~MoveModel() {
 }
 
 bool MoveModel::pathing() {
-    for (auto& agent : this->crowd) {
+    for (auto& agent : this->agents) {
         if (agent->is_pathing) return true;
     }
     return false;
 }
 
 void MoveModel::add_agent(Agent* agent) {
-    this->crowd.push_back(agent);
+    this->agents.push_back(agent);
 }
 
 void MoveModel::add_wall(Wall* wall) {
@@ -36,18 +36,18 @@ void MoveModel::add_wall(Wall* wall) {
 
 void MoveModel::delete_agent() {
     size_t last_idx;
-    if (!this->crowd.empty()) {
-        last_idx = this->crowd.size() - 1;
-        delete this->crowd[last_idx];
-        this->crowd.pop_back();
+    if (!this->agents.empty()) {
+        last_idx = this->agents.size() - 1;
+        delete this->agents[last_idx];
+        this->agents.pop_back();
     }
 }
 
 void MoveModel::delete_crowd() {
-    for (auto& agent : this->crowd) {
+    for (auto& agent : this->agents) {
         delete agent;
     }
-    this->crowd.clear();
+    this->agents.clear();
 }
 
 void MoveModel::delete_walls() {
@@ -66,8 +66,8 @@ void MoveModel::move_crowd(double step_time) {
 }
 
 void MoveModel::sfm_move_crowd(double step_time) {
-    for (auto& agent : this->crowd) {
-        agent->sfm_move(this->crowd, this->walls, step_time);
+    for (auto& agent : this->agents) {
+        agent->sfm_move(this->agents, this->walls, step_time);
     }
 }
 

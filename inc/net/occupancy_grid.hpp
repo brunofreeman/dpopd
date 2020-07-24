@@ -7,6 +7,10 @@
 #include "agent.hpp"
 
 class OccupancyGrid {
+public:
+    static const char    empty_cell_char = ' ';
+    static const char occupied_cell_char = '*';
+
     std::vector<std::vector<bool>> grid;
     double cell_size;
 
@@ -18,6 +22,8 @@ class OccupancyGrid {
     void clear_and_occupy(const std::vector<Agent*>& agents);
     bool are_valid_coords(size_t row, size_t col);
     bool  occupy_if_valid(size_t row, size_t col);
+
+    void print(const bool show_grid_border);
 };
 
 #endif // __OCCUPANCY_GRID_HPP__

@@ -36,8 +36,8 @@ Environment* json_environment(const std::string& filename) {
     double min_y = border->vertices[0].y;
 
     for (size_t i = 1; i < border->vertices.size(); i++) {
-        float x = border->vertices[i].x;
-        float y = border->vertices[i].y;
+        double x = border->vertices[i].x;
+        double y = border->vertices[i].y;
         if (x < min_x) min_x = x;
         if (y < min_y) min_y = y;
     }
