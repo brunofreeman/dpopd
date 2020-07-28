@@ -5,5 +5,7 @@
   "temporal_res"      : 0.5,
   "update_res"        : 0.01,
   "updates_per_frame" : 50,
+  "grid_rows"         : 126,
+  "grid_cols"         : 126,
   "lstm_params"  : {}
 }

@@ -32,7 +32,7 @@ char glfw_version_minor = 1;
 short screen_width = 640;
 short screen_height = 480;
 
-char environment_name[] = "square";
+char environment_name[] = "penta_in_hepta_walls_2";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
