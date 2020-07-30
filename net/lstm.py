@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 import os
 import json
 import struct
@@ -11,10 +12,6 @@ DAT_DIR = os.path.join(ROOT, "dat", MODEL_NAME)
 MODEL_SETTINGS = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
 
 OG_DIM = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
-
-
-def print_tf_version():
-    print(tf.__version__)
 
 
 def parse_dat(filename):
@@ -83,10 +80,32 @@ def print_dat(filename, print_borders=True):
             print()
 
 
+def build_model(og_dim):
+    # use stateful if 1 batch != one 1 .dat
+
+    model = tf.keras.models.Sequential([
+        tf.keras.layers.Input(shape=og_dim),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(og_dim[1], return_sequences=True)
+    ])
+
+    # model = tf.keras.models.Sequential([
+    #     tf.keras.layers.Input(shape=input_dim),
+    #     tf.keras.layers.Dropout(0.2),
+    #     tf.keras.layers.LSTM(input_dim[1], return_sequences=True),
+    #     tf.keras.layers.Dropout(0.2),
+    #     tf.keras.layers.Dense(input_dim[1])
+    # ])
+
+    return model
+
+
 def main():
-    print(OG_DIM)
+    # print(OG_DIM)
     # parse_dat("001")
-    print_dat("001")
+    # print_dat("001")
+    model = build_model(OG_DIM)
+    print(model.summary())
 
 
 main()
