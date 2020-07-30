@@ -46,7 +46,7 @@ def parse_dat(filename):
         bytes_idx += unsigned_char_bytes
 
         for bit_idx in range(0, 8):
-            cell_val = (bool_pack >> (7 - bit_idx)) % 2 == 1
+            cell_val = (bool_pack >> bit_idx) % 2 == 1
             data[timestep_idx][row_idx][col_idx] = cell_val
 
             col_idx += 1
