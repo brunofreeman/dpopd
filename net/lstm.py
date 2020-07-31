@@ -1,49 +1,55 @@
+from typing import List, Tuple
+from io import BufferedReader
 import tensorflow as tf
 import numpy as np
 import os
 import json
 import struct
 
-ROOT = os.path.join(".", "..");
-MODEL_NAME = "first"
-MDL_DIR = os.path.join(ROOT, "def", "mdl")
-DAT_DIR = os.path.join(ROOT, "dat", MODEL_NAME)
 
-MODEL_SETTINGS = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
+ROOT: str = os.path.join(".", "..")
+MODEL_NAME: str = "first"
+MDL_DIR: str = os.path.join(ROOT, "def", "mdl")
+DAT_DIR: str = os.path.join(ROOT, "dat", MODEL_NAME)
 
-OG_DIM = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
+MODEL_SETTINGS: dict = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
+
+OG_DIM: Tuple[int, int] = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
 
 
-def parse_dat(filename):
-    filepath = os.path.join(DAT_DIR, filename + ".dat")
+def parse_dat(filename: str) -> List[List[List[bool]]]:
+    filepath: str = os.path.join(DAT_DIR, filename + ".dat")
 
+    file: BufferedReader
     with open(filepath, mode='rb') as file:
-        byte_data = file.read()
+        byte_data: bytes = file.read()
 
-    unsigned_long_bytes = 8
-    unsigned_char_bytes = 1
-    header_longs = 3
+    unsigned_long_bytes: int = 8
+    unsigned_char_bytes: int = 1
+    header_longs: int = 3
 
-    bytes_idx = unsigned_long_bytes * header_longs
+    bytes_idx: int = unsigned_long_bytes * header_longs
 
-    metadata = struct.unpack("L" * header_longs, byte_data[:bytes_idx])
+    metadata: Tuple[int, int, int] = struct.unpack("L" * header_longs, byte_data[:bytes_idx])
     bytes_idx += 1
 
-    data = [[[False for col in range(metadata[2])] for row in range(metadata[1])] for timestep in range(metadata[0])]
+    data: List[List[List[bool]]] = [[[False for col      in range(metadata[2])]
+                                            for row      in range(metadata[1])]
+                                            for timestep in range(metadata[0])]
 
-    timestep_idx = 0
-    row_idx = 0
-    col_idx = 0
+    timestep_idx: int = 0
+    row_idx: int = 0
+    col_idx: int = 0
 
     for byte in range(header_longs, len(byte_data)):
         if timestep_idx == metadata[0]:
             break
 
-        bool_pack = struct.unpack("B", byte_data[bytes_idx:(bytes_idx + unsigned_char_bytes)])[0]
+        bool_pack: int = struct.unpack("B", byte_data[bytes_idx:(bytes_idx + unsigned_char_bytes)])[0]
         bytes_idx += unsigned_char_bytes
 
         for bit_idx in range(0, 8):
-            cell_val = (bool_pack >> bit_idx) % 2 == 1
+            cell_val: bool = (bool_pack >> bit_idx) % 2 == 1
             data[timestep_idx][row_idx][col_idx] = cell_val
 
             col_idx += 1
@@ -59,31 +65,42 @@ def parse_dat(filename):
     return data
 
 
-def print_dat(filename, print_borders=True):
-    data = parse_dat(filename)
+def print_dat(filename: str, print_borders: bool = True) -> None:
+    data: List[List[List[bool]]] = parse_dat(filename)
+
+    timestep: List[List[bool]]
     for timestep in data:
         if print_borders:
             for i in range(0, len(data[0][0]) + 2):
                 print('-', end='')
+
             print()
+
+        row: List[bool]
         for row in timestep:
             if print_borders:
                 print('|', end='')
+
+            cell: bool
             for cell in row:
                 print('*' if cell else ' ', end='')
+
             if print_borders:
                 print('|', end='')
+
             print()
+
         if print_borders:
             for i in range(0, len(data[0][0]) + 2):
                 print('-', end='')
+
             print()
 
 
-def build_model(og_dim):
+def build_model(og_dim: Tuple[int, int]) -> tf.keras.models.Sequential:
     # use stateful if 1 batch != one 1 .dat
 
-    model = tf.keras.models.Sequential([
+    model: tf.keras.models.Sequential = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=og_dim),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.LSTM(og_dim[1], return_sequences=True)
@@ -100,11 +117,11 @@ def build_model(og_dim):
     return model
 
 
-def main():
+def main() -> None:
     # print(OG_DIM)
     # parse_dat("001")
     # print_dat("001")
-    model = build_model(OG_DIM)
+    model: tf.keras.models.Sequential = build_model(OG_DIM)
     print(model.summary())
 
 
