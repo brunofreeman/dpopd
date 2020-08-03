@@ -35,7 +35,7 @@ unsigned char to_byte(const bool b[8]) {
 }
 
 int usage() {
-    std::cerr << "usage: ./data_generator [starting test file index] [# test files to generate]" << std::endl;
+    std::cerr << "usage: ./data_generator [test/train dir] [starting test file index] [# test files to generate]" << std::endl;
     return EXIT_FAILURE;
 }
 
@@ -53,7 +53,7 @@ void print_warning() {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc != 4) {
         return usage();
     }
 
@@ -61,8 +61,8 @@ int main(int argc, char** argv) {
     size_t num_to_gen;
 
     try {
-        file_idx = std::stoi(argv[1]);
-        num_to_gen = std::stoi(argv[2]);
+        file_idx = std::stoi(argv[2]);
+        num_to_gen = std::stoi(argv[3]);
     } catch (const std::invalid_argument& ex) {
         return usage();
     } catch (const std::out_of_range& ex) {
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
         occupancy_grid->occupy(move_model->agents);
         // occupancy_grid->print(true);
         std::string file_name = zero_pad(file_idx++, FILE_DIGITS);
-        std::string bin_file = DATA_OUT_DIR + file_name + BIN_EXT;
+        std::string bin_file = std::string(DATA_OUT_DIR) + argv[1] + '/' + file_name + BIN_EXT;
         std::ofstream bin_fw(bin_file, std::ios::out | std::ios::binary);
         // std::ofstream csv_fw;
         // csv_fw.open(CSV_FILE);
