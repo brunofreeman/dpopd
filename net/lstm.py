@@ -1,16 +1,17 @@
 from typing import List, Tuple
 from io import BufferedReader
+from tensorflow.python.framework.ops import EagerTensor
 import tensorflow as tf
 import numpy as np
 import os
 import json
 import struct
 
-
 ROOT: str = os.path.join(".", "..")
 MODEL_NAME: str = "first"
 MDL_DIR: str = os.path.join(ROOT, "def", "mdl")
 DAT_DIR: str = os.path.join(ROOT, "dat", MODEL_NAME)
+CKPT_DIR: str = os.path.join(ROOT, "net", "ckpt")
 
 MODEL_SETTINGS: dict = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
 
@@ -33,9 +34,9 @@ def parse_dat(filename: str) -> List[List[List[bool]]]:
     metadata: Tuple[int, int, int] = struct.unpack("L" * header_longs, byte_data[:bytes_idx])
     bytes_idx += 1
 
-    data: List[List[List[bool]]] = [[[False for col      in range(metadata[2])]
-                                            for row      in range(metadata[1])]
-                                            for timestep in range(metadata[0])]
+    data: List[List[List[bool]]] = [[[False for col in range(metadata[2])]
+                                     for row in range(metadata[1])]
+                                    for timestep in range(metadata[0])]
 
     timestep_idx: int = 0
     row_idx: int = 0
@@ -117,12 +118,46 @@ def build_model(og_dim: Tuple[int, int]) -> tf.keras.models.Sequential:
     return model
 
 
+def print_confidence_frame(mat: List[List[float]]) -> None:
+    print('{')
+
+    row: List[float]
+    for row in mat:
+        print('\t', end='')
+        val: float
+        for val in row:
+            print("{:.3f}, ".format(val), end='')
+        print()
+
+    print('}')
+
+
 def main() -> None:
-    # print(OG_DIM)
-    # parse_dat("001")
-    # print_dat("001")
     model: tf.keras.models.Sequential = build_model(OG_DIM)
     print(model.summary())
 
+    data: EagerTensor = tf.stack(parse_dat("001"))
+    out: EagerTensor = model(data)
 
-main()
+    print(out[0])
+
+
+def train_model() -> None:
+    model: tf.keras.models.Sequential = build_model(OG_DIM)
+
+    ckpt: str = tf.train.latest_checkpoint(CKPT_DIR)
+    if ckpt is None:
+        print("No checkpoint loaded")
+    else:
+        model.load_weights(ckpt)
+        print("Loaded checkpoint " + tf.train.latest_checkpoint(CKPT_DIR) + "\n")
+
+    model.summary()
+    model.compile(loss="binary_crossentropy")
+
+    data: EagerTensor = tf.stack(parse_dat("001"))
+
+    model.fit(data[0:len(data)-1], data[1:], batch_size=len(data)-1, shuffle=False)
+
+
+train_model()
