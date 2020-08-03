@@ -6,6 +6,7 @@ import numpy as np
 import os
 import json
 import struct
+import math
 
 ROOT: str = os.path.join(".", "..")
 MODEL_NAME: str = "first"
@@ -16,6 +17,9 @@ CKPT_DIR: str = os.path.join(ROOT, "net", "ckpt")
 MODEL_SETTINGS: dict = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
 
 OG_DIM: Tuple[int, int] = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
+
+CURRENT_FILE_IDX: int = 1
+FILE_COUNT: int = 110
 
 
 def parse_dat(filename: str) -> List[List[List[bool]]]:
@@ -103,17 +107,8 @@ def build_model(og_dim: Tuple[int, int]) -> tf.keras.models.Sequential:
 
     model: tf.keras.models.Sequential = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=og_dim),
-        tf.keras.layers.Dropout(0.2),
         tf.keras.layers.LSTM(og_dim[1], return_sequences=True)
     ])
-
-    # model = tf.keras.models.Sequential([
-    #     tf.keras.layers.Input(shape=input_dim),
-    #     tf.keras.layers.Dropout(0.2),
-    #     tf.keras.layers.LSTM(input_dim[1], return_sequences=True),
-    #     tf.keras.layers.Dropout(0.2),
-    #     tf.keras.layers.Dense(input_dim[1])
-    # ])
 
     return model
 
@@ -126,38 +121,54 @@ def print_confidence_frame(mat: List[List[float]]) -> None:
         print('\t', end='')
         val: float
         for val in row:
-            print("{:.3f}, ".format(val), end='')
+            print(f"{val:.3f}, ", end='')
         print()
 
     print('}')
 
 
-def main() -> None:
-    model: tf.keras.models.Sequential = build_model(OG_DIM)
-    print(model.summary())
-
-    data: EagerTensor = tf.stack(parse_dat("001"))
-    out: EagerTensor = model(data)
-
-    print(out[0])
+def get_file_name(idx: int) -> str:
+    # global CURRENT_FILE_IDX
+    file_name: str = f"{(idx+1):04d}"
+    # CURRENT_FILE_IDX += 1
+    return file_name
 
 
-def train_model() -> None:
-    model: tf.keras.models.Sequential = build_model(OG_DIM)
+# def data_generator() -> Tuple[EagerTensor, EagerTensor]:
+#     data: EagerTensor = tf.stack(parse_dat(get_file_name()))
+#     return data[0:len(data) - 1], data[1:]
 
+
+class DataGenerator(tf.keras.utils.Sequence):
+    def __len__(self) -> int:
+        return FILE_COUNT
+
+    def __getitem__(self, idx: int) -> Tuple[EagerTensor, EagerTensor]:
+        data: EagerTensor = tf.stack(parse_dat(get_file_name(idx)))
+        return data[0:len(data) - 1], data[1:]
+
+
+def train_model(model: tf.keras.models.Sequential) -> None:
     ckpt: str = tf.train.latest_checkpoint(CKPT_DIR)
+
     if ckpt is None:
         print("No checkpoint loaded")
     else:
         model.load_weights(ckpt)
         print("Loaded checkpoint " + tf.train.latest_checkpoint(CKPT_DIR) + "\n")
 
-    model.summary()
     model.compile(loss="binary_crossentropy")
 
-    data: EagerTensor = tf.stack(parse_dat("001"))
+    data_generator: DataGenerator = DataGenerator()
+    model.fit(data_generator, epochs=FILE_COUNT, shuffle=False)
 
-    model.fit(data[0:len(data)-1], data[1:], batch_size=len(data)-1, shuffle=False)
+
+def main() -> None:
+    model: tf.keras.models.Sequential = build_model(OG_DIM)
+
+    model.summary()
+
+    train_model(model)
 
 
-train_model()
+main()
