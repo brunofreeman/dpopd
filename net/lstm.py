@@ -12,9 +12,10 @@ ROOT: str = os.path.join(".", "..")
 MODEL_NAME: str = "first"
 MDL_DIR: str = os.path.join(ROOT, "def", "mdl")
 DAT_DIR: str = os.path.join(ROOT, "dat", MODEL_NAME)
-CKPT_DIR: str = os.path.join(ROOT, "net", "ckpt")
+CKPT_DIR: str = os.path.join(ROOT, "net", "ckpt", MODEL_NAME)
 
 MODEL_SETTINGS: dict = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
+PATIENCE = MODEL_SETTINGS["lstm_params"]["patience"]
 
 OG_DIM: Tuple[int, int] = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
 
@@ -128,15 +129,8 @@ def print_confidence_frame(mat: List[List[float]]) -> None:
 
 
 def get_file_name(idx: int) -> str:
-    # global CURRENT_FILE_IDX
     file_name: str = f"{(idx+1):04d}"
-    # CURRENT_FILE_IDX += 1
     return file_name
-
-
-# def data_generator() -> Tuple[EagerTensor, EagerTensor]:
-#     data: EagerTensor = tf.stack(parse_dat(get_file_name()))
-#     return data[0:len(data) - 1], data[1:]
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -160,7 +154,21 @@ def train_model(model: tf.keras.models.Sequential) -> None:
     model.compile(loss="binary_crossentropy")
 
     data_generator: DataGenerator = DataGenerator()
-    model.fit(data_generator, epochs=FILE_COUNT, shuffle=False)
+    early_stop = tf.keras.callbacks.EarlyStopping(monitor="loss", patience=PATIENCE)
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=os.path.join(CKPT_DIR, "ckpt_{epoch}"), save_weights_only=True)
+
+    try:
+        initial_epoch = int(tf.train.latest_checkpoint(CKPT_DIR).split("_")[-1])  # relies on current file formatting
+    except:
+        initial_epoch = 0
+
+    model.fit(
+        x=data_generator,
+        epochs=FILE_COUNT,
+        initial_epoch=initial_epoch,
+        shuffle=False,
+        callbacks=[checkpoint_callback, early_stop]
+    )
 
 
 def main() -> None:
