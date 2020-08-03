@@ -33,6 +33,9 @@ obj/*
 *.app
 bin/*
 
+# JetBrains
+.idea/
+
 # CMake/Makefile
 bin/
 obj/
@@ -42,3 +45,7 @@ cmake-build-debug/
 cmake_install.cmake
 CMakeCache.txt
 Makefile
+
+# Generated Data
+dat/*/*
+net/*/*
