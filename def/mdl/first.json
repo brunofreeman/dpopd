@@ -7,5 +7,7 @@
   "updates_per_frame" : 50,
   "grid_rows"         : 126,
   "grid_cols"         : 126,
-  "lstm_params"  : {}
+  "lstm_params"  : {
+    "patience" : 10
+  }
 }
