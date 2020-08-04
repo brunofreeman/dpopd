@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-#define MODEL_NAME "first"
+#define MODEL_NAME "second"
 #define DATA_OUT_DIR "./dat/" MODEL_NAME "/"
 #define BIN_EXT ".dat"
 #define CSV_EXT ".csv"

@@ -1,0 +1,13 @@
+{
+  "environment"       : "square",
+  "crowd_type"        : "milling",
+  "spacial_res"       : 0.2,
+  "temporal_res"      : 1.25,
+  "update_res"        : 0.01,
+  "updates_per_frame" : 125,
+  "grid_rows"         : 126,
+  "grid_cols"         : 126,
+  "lstm_params"  : {
+    "patience" : 10
+  }
+}
