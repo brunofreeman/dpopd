@@ -6,13 +6,13 @@ size_t Agent::crowd_size = 0;
 
 
 Agent::Agent(const double radius) : radius(radius), is_pathing(true),
-                                                                         at_corner(false), shape(nullptr),
-                                                                         corner_direction(CLOCKWISE),
-                                                                         needs_repathing(false), ticks(0) {
+                                    at_corner(false), shape(nullptr),
+                                    corner_direction(CLOCKWISE),
+                                    needs_repathing(false), stuck_ticks(0) {
 
     this->id = Agent::crowd_size++;
     this->desired_speed = from_normal_distribution(1.29, 0.19);
-
+    this->stopped_ticks = 0;
 }
 
 Agent::~Agent() {
@@ -109,7 +109,6 @@ void Agent::refresh_immediate_goal(const std::vector<Wall*>& walls) {
     }
 }
 
-// osc.: 23
 void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>& walls, double step_time) {
     this->refresh_immediate_goal(walls);
     Vector acceleration = this->sfm_driving_force(this->immediate_goal) +
@@ -120,12 +119,12 @@ void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>
 
     size_t ticks_per_check = 100;
 
-    if (ticks++ == ticks_per_check) {
+    if (stuck_ticks++ == ticks_per_check) {
         double stuck_factor = 4;
         this->needs_repathing = !this->path.empty() &&
                                 this->velocity.norm() < (this->desired_speed / stuck_factor) &&
                                 !this->clear_path_to(this->path[0].position, walls);
-        this->ticks = 0;
+        this->stuck_ticks = 0;
     }
 
 
@@ -135,6 +134,10 @@ void Agent::sfm_move(const std::vector<Agent*>& agents, const std::vector<Wall*>
     }
 
     this->position += this->velocity * step_time;
+
+    if (!this->is_pathing) {
+        this->stopped_ticks++;
+    }
 }
 
 Vector Agent::sfm_driving_force(const Vector& position_target) const {

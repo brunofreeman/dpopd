@@ -36,6 +36,9 @@ char environment_name[] = "penta_in_hepta_walls_2";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
+size_t min_stop_ticks = 100;
+size_t max_stop_ticks = 500;
+
 static void glfw_set_version(int major, int minor) {
     // 4.1 INTEL-14.6.18, could use lower #version if necessary
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
@@ -85,7 +88,8 @@ static int show_visualization() {
     ego = environment_graphics_object(environment, screen_width, screen_height, padding);
 
     move_model = new MoveModel(SOCIAL_FORCE_MODEL, RANDOM, environment,
-            num_agents, agent_radius, waypoint_radius);
+            num_agents, agent_radius, waypoint_radius,
+            min_stop_ticks, max_stop_ticks);
 
     agos = new GraphicsObject* [move_model->agents.size()];
     for (size_t i = 0; i < move_model->agents.size(); i++) {

@@ -13,3 +13,8 @@ double from_normal_distribution(const double mean, const double std_dev) {
     std::normal_distribution<double> distribution(mean, std_dev);
     return distribution(engine);
 }
+
+size_t strand(size_t min, size_t max) {
+    size_t range = max - min + 1;
+    return (rand() % range) + min;
+}

@@ -7,10 +7,13 @@ import json
 import struct
 import matplotlib.pyplot as plt
 import warnings
-import numpy
+
+
+MODEL_NAME: str = "second"
+FILE_COUNT: int = 100
 
 ROOT: str = os.path.join(".", "..")
-MODEL_NAME: str = "second"
+
 MDL_DIR: str = os.path.join(ROOT, "def", "mdl")
 DAT_DIR: str = os.path.join(ROOT, "dat", MODEL_NAME)
 TRAIN_DAT_DIR: str = os.path.join(DAT_DIR, "train")
@@ -18,12 +21,9 @@ TEST_DAT_DIR: str = os.path.join(DAT_DIR, "test")
 CKPT_DIR: str = os.path.join(ROOT, "net", "ckpt", MODEL_NAME)
 
 MODEL_SETTINGS: dict = json.load(open(os.path.join(MDL_DIR, MODEL_NAME + ".json")))
+
 PATIENCE = MODEL_SETTINGS["lstm_params"]["patience"]
-
 OG_DIM: Tuple[int, int] = (MODEL_SETTINGS["grid_rows"], MODEL_SETTINGS["grid_cols"])
-
-# CURRENT_FILE_IDX: int = 1
-FILE_COUNT: int = 100
 
 
 def parse_dat(directory: str, filename: str) -> List[List[List[float]]]:
@@ -116,9 +116,20 @@ def build_model(og_dim: Tuple[int, int]) -> tf.keras.models.Sequential:
     # ])
 
     # arch2
+    # model: tf.keras.models.Sequential = tf.keras.models.Sequential([
+    #     tf.keras.layers.Input(shape=og_dim),
+    #     tf.keras.layers.LSTM(og_dim[1], return_sequences=True),
+    #     tf.keras.layers.LSTM(og_dim[1], return_sequences=True)
+    # ])
+
+    # arch3
+    dense_units: int = 64
     model: tf.keras.models.Sequential = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=og_dim),
         tf.keras.layers.LSTM(og_dim[1], return_sequences=True),
+        tf.keras.layers.Dense(dense_units),
+        tf.keras.layers.LSTM(og_dim[1], return_sequences=True),
+        tf.keras.layers.Dense(dense_units),
         tf.keras.layers.LSTM(og_dim[1], return_sequences=True)
     ])
 

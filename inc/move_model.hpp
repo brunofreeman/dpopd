@@ -25,14 +25,19 @@ public:
     std::vector<Agent*> agents;
     std::vector<Wall*> walls;
     std::vector<std::vector<bfreeman::Point>> dijkstra_polygon;
+    std::vector<size_t> stop_ticks;
     MoveModelType type;
     double agent_radius;
     double waypoint_radius;
     Environment* environment;
+    size_t min_stop_ticks;
+    size_t max_stop_ticks;
+    bool restart_agents;
 
     MoveModel(MoveModelType type, SpawnGoalType spawn_goal_type,
             Environment* environment, size_t num_agents,
-              double agent_radius, double waypoint_radius);
+              double agent_radius, double waypoint_radius,
+              size_t min_stop_ticks, size_t max_stop_ticks, bool restart_agents);
 
     ~MoveModel();
 

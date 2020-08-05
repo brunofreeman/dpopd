@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
         model = json_model(MODEL_NAME);
         environment = json_environment(model->environment_name);
         move_model = new MoveModel(mm_type, sg_type, environment,
-                                   num_agents, agent_radius, waypoint_radius);
+                                   num_agents, agent_radius, waypoint_radius, 10000, 1000000, false);
         occupancy_grid = new OccupancyGrid(model, environment);
 
         size_t update_count = 0;

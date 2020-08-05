@@ -23,8 +23,10 @@ public:
     Orientation corner_direction;
     Vector immediate_goal;
 
-    size_t ticks;
+    size_t stuck_ticks;
     bool needs_repathing;
+
+    size_t stopped_ticks;
 
     Vector prev_update_pos;
     Polygon* shape;

@@ -1,4 +1,5 @@
 --Bugs--
+TODO: agents may path through a channel that is too narrow for them to fit and get stuck
 
 --Optimization--
 

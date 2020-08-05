@@ -1,7 +1,9 @@
 #include "move_model.hpp"
+#include "random_wrapper.hpp"
 
 MoveModel::MoveModel(MoveModelType type, SpawnGoalType spawn_goal_type,
-                     Environment *environment, size_t num_agents, double agent_radius, double waypoint_radius) {
+                     Environment *environment, size_t num_agents, double agent_radius, double waypoint_radius,
+                     size_t min_stop_ticks, size_t max_stop_ticks, bool restart_agents) {
 
     this->type = type;
     this->agent_radius = agent_radius;
@@ -10,7 +12,13 @@ MoveModel::MoveModel(MoveModelType type, SpawnGoalType spawn_goal_type,
     this->populate_dijkstra_polygon();
     this->create_walls();
     this->create_agents(num_agents);
-
+    this->min_stop_ticks = min_stop_ticks;
+    this->max_stop_ticks = max_stop_ticks;
+    this->stop_ticks = std::vector<size_t>(this->agents.size());
+    for (size_t& stop_tick : this->stop_ticks) {
+        stop_tick = strand(this->min_stop_ticks, this->max_stop_ticks);
+    }
+    this->restart_agents = restart_agents;
 }
 
 MoveModel::~MoveModel() {
@@ -66,8 +74,17 @@ void MoveModel::move_crowd(double step_time) {
 }
 
 void MoveModel::sfm_move_crowd(double step_time) {
-    for (auto& agent : this->agents) {
-        agent->sfm_move(this->agents, this->walls, step_time);
+    for (size_t i = 0; i < this->agents.size(); i++) {
+        if (this->agents[i]->stopped_ticks >= this->stop_ticks[i]){
+            if (this->restart_agents) {
+                this->set_agent_waypoints(this->agents[i], environment->random_interior_point(this->agents[i]->radius));
+                this->agents[i]->update_corner_direction();
+                this->agents[i]->is_pathing = true;
+                this->stop_ticks[i] = strand(this->min_stop_ticks, this->max_stop_ticks);
+            }
+            this->agents[i]->stopped_ticks = 0;
+        }
+        this->agents[i]->sfm_move(this->agents, this->walls, step_time);
     }
 }
 
