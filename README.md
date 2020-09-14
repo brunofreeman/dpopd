@@ -1,4 +1,4 @@
-# Generation of Discrete Pedestrian Occupancy Probability Distributions
+# Generation of *D*iscrete *P*edestrian *O*ccupancy *P*robability *D*istributions
 This is the codebase for a [Caltech SURF](http://sfp.caltech.edu/programs/surf) research project.
 The project aims to produce a predictive model that can forecast the likelihood that a
 discretized cell in an environment will be occupied by at least one pedestrian at a future time
