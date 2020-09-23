@@ -12,15 +12,15 @@
 Environment* environment;
 GraphicsObject* ego;
 float padding = 0.05f;
-Color environment_color(SILVER_RGB);
+Color environment_color(WHITE_RGB);
 
 GraphicsObject** agos;
-Color agent_pathing_color(ORANGE_RGB);
-Color agent_stationary_color(GREEN_RGB);
+Color agent_pathing_color(RED_RGB);
+Color agent_stationary_color(BLUE_RGB);
 
 MoveModelType move_model_type = SOCIAL_FORCE_MODEL;
 MoveModel* move_model;
-size_t num_agents = 20;
+size_t num_agents = 100;
 
 // radii given by Moussaid et al., 2009
 double agent_radius = 0.2f;
@@ -32,7 +32,7 @@ char glfw_version_minor = 1;
 short screen_width = 640;
 short screen_height = 480;
 
-char environment_name[] = "penta_in_hepta_walls_2";
+char environment_name[] = "irregular_2";
 char window_name[] = "dpo_pdf";
 char shader_path[] = "src/gfx/_monochrome.shader";
 
@@ -89,7 +89,7 @@ static int show_visualization() {
 
     move_model = new MoveModel(SOCIAL_FORCE_MODEL, RANDOM, environment,
             num_agents, agent_radius, waypoint_radius,
-            min_stop_ticks, max_stop_ticks);
+            min_stop_ticks, max_stop_ticks, false);
 
     agos = new GraphicsObject* [move_model->agents.size()];
     for (size_t i = 0; i < move_model->agents.size(); i++) {

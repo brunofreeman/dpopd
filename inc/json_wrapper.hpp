@@ -12,7 +12,7 @@
 #define MDL_PATH "./def/mdl/"
 #define MDL_ID_ENVIRONMENT "environment"
 #define MDL_ID_CROWD_TYPE "crowd_type"
-#define MDL_ID_SPACIAL_RES "spacial_res"
+#define MDL_ID_SPATIAL_RES "spatial_res"
 #define MDL_ID_TEMPORAL_RES "temporal_res"
 #define MDL_ID_UPDATE_RES "update_res"
 #define MDL_ID_UPDATES_PER_FRAME "updates_per_frame"
